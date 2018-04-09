@@ -24,28 +24,28 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-        main.cpp \
-        mainwindow.cpp \
-    outcomewidget.cpp \
-    widgetforstack.cpp \
-    amountwidget.cpp \
-    saveddataworker.cpp \
-    incomewidget.cpp \
-    summarywidget.cpp
+			main.cpp \
+			ui/mainwindow.cpp \
+			ui/outcomewidget.cpp \
+			ui/widgetforstack.cpp \
+			ui/amountwidget.cpp \
+			data/saveddataworker.cpp \
+			ui/incomewidget.cpp \
+			ui/summarywidget.cpp
 
 HEADERS += \
-        mainwindow.h \
-    outcomewidget.h \
-    widgetforstack.h \
-    amountwidget.h \
-    saveddataworker.h \
-    incomewidget.h \
-    summarywidget.h \
-    operations.h
+        	ui/mainwindow.h \
+			ui/outcomewidget.h \
+        	ui/widgetforstack.h \
+        	ui/amountwidget.h \
+			data/saveddataworker.h \
+        	ui/incomewidget.h \
+        	ui/summarywidget.h \
+			data/operations.h
 
 FORMS += \
-        mainwindow.ui \
-    summarywidget.ui
+            ui/mainwindow.ui \
+			ui/summarywidget.ui
 
 CONFIG += mobility
 MOBILITY = 
