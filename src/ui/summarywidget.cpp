@@ -1,3 +1,4 @@
+#include <QDebug>
 #include <QDate>
 #include "summarywidget.h"
 #include "ui_summarywidget.h"
@@ -28,5 +29,17 @@ void SummaryWidget::on_pushButton_clicked()
 {
     //db_worker->saveNewOperation(this->m_operation.comment);
     // load operations
-    emit goWait("Saving...");
+    ReadDataTask task(this);
+    task.setDt_from(ui->deFrom->dateTime());
+    task.setDt_from(ui->deTo->dateTime());
+    int uid = task_queue->addNewTask(&task);
+    emit goWait("Loading...");
+    while(1) {
+        Task task = task_queue->getFinishedTask(uid);
+        if (task.isValid()){
+            qDebug()<<task.uid();
+        }
+        qDebug()<<"Some I'm still waiting...";
+    }
+
 }

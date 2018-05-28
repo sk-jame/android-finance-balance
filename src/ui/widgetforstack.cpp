@@ -2,7 +2,7 @@
 #include "widgetforstack.h"
 
 Operation WidgetForStack::m_operation = Operation();
-SavedDataWorker* WidgetForStack::db_worker = nullptr;
+TaskQueue* WidgetForStack::task_queue = nullptr;
 
 WidgetForStack::WidgetForStack(QWidget *parent)
     : QWidget(parent)
@@ -16,6 +16,6 @@ void WidgetForStack::keyReleaseEvent(QKeyEvent *event)
     }
 }
 
-void WidgetForStack::setDBWorker(SavedDataWorker *dbw){
-    db_worker = dbw;
+void WidgetForStack::setTaskQueue(TaskQueue *dbw){
+    task_queue = dbw;
 }

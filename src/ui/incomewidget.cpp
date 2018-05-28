@@ -45,17 +45,17 @@ void IncomeWidget::onOk()
     this->m_operation.type.clear();
     this->m_operation.dir = Operation::income;
     this->m_operation.comment = leComment->text();
-//    qDebug() << SavedDataWorker::saveNewEntry(this->m_operation.toJSON());
 
     if (cbFromSaved->isChecked()){
         this->m_operation.type = "Отложить";
         this->m_operation.dir = Operation::outcome;
         this->m_operation.comment = leComment->text();
         this->m_operation.amount = this->m_operation.amount * -1;
-//        qDebug() << SavedDataWorker::saveNewEntry(this->m_operation.toJSON());
     }
 
-    // TODO save to db
+    SaveDataTask task(this, this->m_operation);
+    task_queue->addNewTask(&task);
+    emit notify("Операция добавлена в очередь на запись в базу");
     emit goHome();
 }
 

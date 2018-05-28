@@ -45,12 +45,13 @@ void AmountWidget::onOk()
         return;
     }
     this->m_operation.comment = leComment->text();
-    db_worker->saveNewOperation(this->m_operation.comment);
-    emit goWait("Saving...");
-    emit goHome(); // TODO remove after wait widget will be finished
+    SaveDataTask task(this, this->m_operation);
+    task_queue->addNewTask(&task);
+    emit notify("Операция добавлена в очередь на запись в базу");
+    emit goHome();
 }
 
 void AmountWidget::onCancel()
 {
-    emit goHome();
+    emit goBack();
 }

@@ -19,8 +19,8 @@ public:
     QString     comment;
     qreal       amount;
     QDateTime   date_time;
+
     Operation() :
-        m_type_index(-1),
         dir(income),
         type(""),
         comment(""),
@@ -42,19 +42,15 @@ public:
     }
 
     Operation(const QJsonObject& json) :
-        m_type_index(-1),
         dir((json["direction"].toString() == "income") ? (income) : (outcome)),
         type(json["type"].toString()),
         comment(json["comment"].toString()),
         amount(json["amount"].toString().toFloat()),
-        date_time(json["date_time"].toString().toFloat())
+        date_time(QDateTime::fromString(json["date_time"].toString(), "dd.MM.yyyy HH:mm:ss"))
     {}
 
 
-    int typeIndex() {
-        if (m_type_index != -1 || dir == income)
-            return m_type_index;
-
+    int typeIndex() const {
         QStringList tmpList;
         tmpList.push_back("Отложить");
         tmpList.push_back("Развлечения");
@@ -63,8 +59,19 @@ public:
         tmpList.push_back("Кредиты");
         tmpList.push_back("Еда");
         tmpList.push_back("Транспорт");
-        m_type_index = tmpList.indexOf(type);
-        return m_type_index;
+        return tmpList.indexOf(type);
+    }
+
+    static QString index2type(int idx){
+        QStringList tmpList;
+        tmpList.push_back("Отложить");
+        tmpList.push_back("Развлечения");
+        tmpList.push_back("Помощь");
+        tmpList.push_back("Квартплата");
+        tmpList.push_back("Кредиты");
+        tmpList.push_back("Еда");
+        tmpList.push_back("Транспорт");
+        return tmpList.at(idx);
     }
 };
 

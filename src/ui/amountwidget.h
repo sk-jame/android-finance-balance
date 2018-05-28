@@ -21,6 +21,8 @@ class AmountWidget : public WidgetForStack
 public:
     AmountWidget(QWidget *parent);
     ~AmountWidget();
+signals:
+    void notify(QString str);
 protected slots:
     void onOk();
     void onCancel();

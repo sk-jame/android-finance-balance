@@ -33,7 +33,8 @@ SOURCES += \
 			ui/amountwidget.cpp \
 			data/saveddataworker.cpp \
 			ui/incomewidget.cpp \
-			ui/summarywidget.cpp
+			ui/summarywidget.cpp \
+    data/task.cpp
 
 HEADERS += \
         	ui/mainwindow.h \

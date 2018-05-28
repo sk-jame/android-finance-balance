@@ -1,16 +1,16 @@
 #ifndef TASK_H
 #define TASK_H
 
+#include <QMutexLocker>
+#include <QList>
 #include <QObject>
 #include "operations.h"
 #include <QWidget>
 
 class Task
 {
-    QWidget* m_lastWidget;
-    Operation m_operation;
-    TaskStatus m_status;
-    QString m_error;
+private:
+    qint32 m_uid;
 public:
     enum TaskStatus {
         status_not_started,
@@ -19,59 +19,73 @@ public:
         status_already_exist
     };
 
-    explicit Task(QWidget* widget, Operation& operation);
+    enum TaskType {
+        task_write = 0,
+        task_read
+    };
 
+    Task();
+    Task(QWidget* widget);
     QWidget *lastWidget() const;
-    Operation operation() const;
-    bool finished() const;
     QString error() const;
     void setError(const QString &error);
     TaskStatus status() const;
     void setStatus(const TaskStatus &status);
+    bool isValid() const;
+
+    virtual int taskType();
+    qint32 uid() const;
+    void setUid(const qint32 &uid);
+
+protected:
+    TaskType m_type;
+    QWidget* m_lastWidget;
+    TaskStatus m_status;
+    QString m_error;
+    bool m_isValid;
 };
 
-Operation Task::operation() const
+class SaveDataTask : public Task
 {
-    return m_operation;
-}
+public:
+    SaveDataTask();
+    explicit SaveDataTask(QWidget* widget, const Operation& operation);
+    Operation &operation();
+private:
+    Operation m_operation;
+};
 
-bool Task::finished() const
+class ReadDataTask : public Task
 {
-return m_finished;
-}
+    QList<Operation> m_read_data;
+    QDateTime m_dt_from, m_dt_to;
+public:
+    ReadDataTask();
+    explicit ReadDataTask(QWidget* widget);
+    void addOperation(const Operation& op);
+    QList<Operation> read_data() const;
 
-QString Task::error() const
+    QDateTime dt_from() const;
+    void setDt_from(const QDateTime &dt_from);
+    QDateTime dt_to() const;
+    void setDt_to(const QDateTime &dt_to);
+};
+
+class TaskQueue
 {
-return m_error;
-}
+    QVector<Task> _task_wait, _task_finished;
+    QMutex mutex_new_op, mutex_finished;
+public:
+    TaskQueue();
+    ~TaskQueue();
+    int addNewTask(const Task *task);
+    void addFinishedTask(const Task &task);
+    Task takeTask();
+    bool hasTasks();
+    QVector<Task> getTasks();
+    QVector<Task> getFinishedTask();
 
-void Task::setError(const QString &error)
-{
-m_error = error;
-}
-
-TaskStatus Task::status() const
-{
-return m_status;
-}
-
-void Task::setStatus(const TaskStatus &status)
-{
-m_status = status;
-}
-
-Task::Task(QWidget *widget, Operation &operation):
-    m_lastWidget(widget),
-    m_operation(operation),
-    m_status(status_not_started),
-    m_error(QString())
-{
-
-}
-
-QWidget *Task::lastWidget() const
-{
-    return m_lastWidget;
-}
+    Task getFinishedTask(qint32 uid);
+};
 
 #endif // TASK_H

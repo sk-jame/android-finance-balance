@@ -21,11 +21,11 @@ int main(int argc, char *argv[])
     file.close();
 #endif
 
-    SavedDataWorker database_worker;
-
+    TaskQueue task_queue;
     MainWindow w;
-    WidgetForStack::setDBWorker(&database_worker);
+    SavedDataWorker database_worker(&task_queue);
+    WidgetForStack::setTaskQueue(&task_queue);
     w.show();
-
+    database_worker.start();
     return a.exec();
 }
