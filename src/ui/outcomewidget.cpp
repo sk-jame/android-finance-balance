@@ -14,11 +14,10 @@ OutcomeWidget::OutcomeWidget(QWidget *parent)
     radioList.at(0)->setChecked(true);
     btnBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     lay = new QVBoxLayout(this);
-    spacer = new QSpacerItem(20, 70);
     foreach(QRadioButton* btn, radioList){
         lay->addWidget(btn);
     }
-    lay->addSpacerItem(spacer);
+    lay->addSpacerItem(new QSpacerItem(20, 70));
     lay->addWidget(btnBox);
     connect(btnBox, &QDialogButtonBox::accepted, this, &OutcomeWidget::onOk);
     connect(btnBox, &QDialogButtonBox::rejected, this, &OutcomeWidget::onCancel);

@@ -18,12 +18,14 @@ public:
     QString     type;
     QString     comment;
     qreal       amount;
+    QDateTime   date_time;
     Operation() :
         m_type_index(-1),
         dir(income),
         type(""),
         comment(""),
-        amount(0)
+        amount(0),
+        date_time(QDateTime::currentDateTime())
         {}
 
     QJsonObject toJSON(bool with_date = true){
@@ -44,7 +46,8 @@ public:
         dir((json["direction"].toString() == "income") ? (income) : (outcome)),
         type(json["type"].toString()),
         comment(json["comment"].toString()),
-        amount(json["amount"].toString().toFloat())
+        amount(json["amount"].toString().toFloat()),
+        date_time(json["date_time"].toString().toFloat())
     {}
 
 

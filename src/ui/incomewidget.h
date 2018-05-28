@@ -18,7 +18,6 @@ class IncomeWidget : public WidgetForStack
     QLineEdit *leComment;
     QCheckBox *cbFromSaved;
     QDialogButtonBox *btnBox;
-    QSpacerItem *spacer;
     QVBoxLayout *lay;
 public:
     IncomeWidget(QWidget *parent);

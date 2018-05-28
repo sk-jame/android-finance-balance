@@ -1,20 +1,66 @@
 #include <QMessageBox>
 #include <QDebug>
 #include "saveddataworker.h"
+#include <QSqlQuery>
 
-const QString SavedDataWorker::fileFormat = ".json";
+/* constants */
+const QString SavedDataWorker::filename = ":/db/.balance.sqlite";
 
-QString SavedDataWorker::getFileFormat()
+/* function implementation */
+SavedDataWorker::SavedDataWorker(QObject *parent)
+    : QObject(parent),
+      sdb(QSqlDatabase::addDatabase("QSQLITE")),
+      query(sdb)
 {
-    return fileFormat;
+    sdb.setDatabaseName(filename);
+    sdb.setUserName("Alex");
+    sdb.setPassword("9379992");
+    if (!sdb.open()){
+        qDebug() << sdb.lastError();
+        return;
+    }
 }
 
-bool SavedDataWorker::saveNewEntry(const QJsonObject& input)
+SavedDataWorker::~SavedDataWorker()
 {
+    sdb.close();
+}
+
+QString SavedDataWorker::getFilename()
+{
+    return filename;
+}
+
+void SavedDataWorker::saveNewOperation(const Operation& op) {
+    QString request = QString::asprintf("INSERT INTO `%s` (`date`,`time`,`source`, `amount`) VALUES ('%s','%s',%u,%i);",
+                                        (op.dir == Operation::income) ? ("Income") : ("Outcome"),
+                                        op.date_time.date().toString("dd.MM.yyyy").toStdString().c_str(),
+                                        op.date_time.time().toString("HH:mm:ss").toStdString().c_str(),
+                                        op.type,
+                                        op.amount);
+
+    if (!query.exec(request)){
+        emit error(query.lastError(), query.lastError().type());
+    }
+
+
+}
+
+bool SavedDataWorker::saveToJson(const QJsonObject& input, QString format)
+{
+
+    QSqlDatabase sdb = QSqlDatabase::addDatabase("QSQLITE");
+    sdb.setDatabaseName("balance.sqlite");
+
+    if (!sdb.open()) {
+        QMessageBox::critical(nullptr, "Не могу открыть файл для сохранения", "Херь какая-то, не получается открыть файл для дозаписи в него(или создать)");
+        return false;
+    }
+
     QJsonDocument doc;
     QJsonArray j_arr;
 
-    QFile file(QDate::currentDate().toString("MM_yyyy") + fileFormat);
+    QFile file(QDate::currentDate().toString("MM_yyyy") + format);
 
     if (file.exists()){
         if (!file.open(QIODevice::ReadOnly)){
@@ -37,18 +83,4 @@ bool SavedDataWorker::saveNewEntry(const QJsonObject& input)
     file.write(newdoc.toJson());
     file.close();
     return true;
-}
-
-bool SavedDataWorker::loadSavedEntries(DataCollector &collector, const QString &date_from, const QString &date_to)
-{
-    QJsonDocument doc;
-    if (date_from == "" && date_to == ""){
-        // read all files
-    }
-    return true;
-}
-
-SavedDataWorker::SavedDataWorker()
-{
-
 }

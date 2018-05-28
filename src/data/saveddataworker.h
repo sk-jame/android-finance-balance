@@ -7,19 +7,29 @@
 #include <QObject>
 #include <QDate>
 #include <QFile>
-#include "datacollector.h"
+#include <QObject>
+#include <QtSql>
+#include <QSqlDatabase>
+#include "operations.h"
 
-// сделать динамическую типизацию платежей, после чтения из файла, для поиска, сортировок и пр.
-// нужен ещё один класс для работы с прочитанной "базой". А то упячка, а не класс получиться.
-class SavedDataWorker
+class SavedDataWorker : QObject
 {
-    static const QString fileFormat;
+    Q_OBJECT
+    static const QString filename;
+    QSqlDatabase sdb;
+    QSqlQuery query;
 public:
-    SavedDataWorker();
-    static QString getFileFormat();
-    static bool saveNewEntry(const QJsonObject &input);
-    static bool loadSavedEntries(DataCollector &collector, const QString& date_from = "", const QString &date_to = "");
+    SavedDataWorker(QObject* parent = Q_NULLPTR);
+    virtual ~SavedDataWorker();
+    static QString getFilename();
 
+
+    static bool saveToJson(const QJsonObject &input, QString format);
+signals:
+    void error(QString text, int code = -1);
+//    void finished()
+public slots:
+    void saveNewOperation(const Operation &op);
 };
 
 #endif // SAVEDDATAWORKER_H

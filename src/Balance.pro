@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -16,6 +16,8 @@ TEMPLATE = app
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
+
+# DEFINES += NOT_DEFAULT_STYLE_ALLOWED
 
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -41,7 +43,8 @@ HEADERS += \
 			data/saveddataworker.h \
         	ui/incomewidget.h \
         	ui/summarywidget.h \
-			data/operations.h
+			data/operations.h \
+    data/task.h
 
 FORMS += \
             ui/mainwindow.ui \
@@ -49,4 +52,7 @@ FORMS += \
 
 CONFIG += mobility
 MOBILITY = 
+
+RESOURCES += \
+    resources.qrc
 

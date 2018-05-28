@@ -1,7 +1,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include "amountwidget.h"
-#include "saveddataworker.h"
+#include "data/saveddataworker.h"
 
 AmountWidget::AmountWidget(QWidget* parent) : WidgetForStack(parent),
         labelAmount(new QLabel("Введите сумму", this)),
@@ -18,6 +18,9 @@ AmountWidget::AmountWidget(QWidget* parent) : WidgetForStack(parent),
     lay->addWidget(leComment);
     lay->addSpacerItem(spacer);
     lay->addWidget(btnBox);
+
+    leAmount->setClearButtonEnabled(true);
+    leComment->setClearButtonEnabled(true);
 
     connect(btnBox, &QDialogButtonBox::accepted, this, &AmountWidget::onOk);
     connect(btnBox, &QDialogButtonBox::rejected, this, &AmountWidget::onCancel);
@@ -42,8 +45,9 @@ void AmountWidget::onOk()
         return;
     }
     this->m_operation.comment = leComment->text();
-    qDebug() << SavedDataWorker::saveNewEntry(this->m_operation.toJSON());
-    emit goHome();
+    db_worker->saveNewOperation(this->m_operation.comment);
+    emit goWait("Saving...");
+    emit goHome(); // TODO remove after wait widget will be finished
 }
 
 void AmountWidget::onCancel()

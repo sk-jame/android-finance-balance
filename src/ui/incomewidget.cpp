@@ -1,16 +1,15 @@
 #include <QDebug>
 #include <QMessageBox>
 #include "incomewidget.h"
-#include "saveddataworker.h"
+#include "data/saveddataworker.h"
 
 IncomeWidget::IncomeWidget(QWidget* parent) : WidgetForStack(parent),
         labelAmount(new QLabel("Введите сумму", this)),
         labelComment(new QLabel("Введите комментарий к операции", this)),
         leAmount(new QLineEdit(this)),
         leComment(new QLineEdit(this)),
-        cbFromSaved(new QCheckBox(this)),
+        cbFromSaved(new QCheckBox("Забрать эти деньги из отложенных\nв активный баланс",this)),
         btnBox(new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this)),
-        spacer(new QSpacerItem(40, 75)),
         lay(new QVBoxLayout(this))
 {
     lay->addWidget(labelAmount);
@@ -18,7 +17,7 @@ IncomeWidget::IncomeWidget(QWidget* parent) : WidgetForStack(parent),
     lay->addWidget(cbFromSaved);
     lay->addWidget(labelComment);
     lay->addWidget(leComment);
-    lay->addSpacerItem(spacer);
+    lay->addSpacerItem(new QSpacerItem(400, 100));
     lay->addWidget(btnBox);
 
     connect(btnBox, &QDialogButtonBox::accepted, this, &IncomeWidget::onOk);
@@ -46,16 +45,17 @@ void IncomeWidget::onOk()
     this->m_operation.type.clear();
     this->m_operation.dir = Operation::income;
     this->m_operation.comment = leComment->text();
-    qDebug() << SavedDataWorker::saveNewEntry(this->m_operation.toJSON());
+//    qDebug() << SavedDataWorker::saveNewEntry(this->m_operation.toJSON());
 
     if (cbFromSaved->isChecked()){
         this->m_operation.type = "Отложить";
         this->m_operation.dir = Operation::outcome;
         this->m_operation.comment = leComment->text();
         this->m_operation.amount = this->m_operation.amount * -1;
-        qDebug() << SavedDataWorker::saveNewEntry(this->m_operation.toJSON());
+//        qDebug() << SavedDataWorker::saveNewEntry(this->m_operation.toJSON());
     }
 
+    // TODO save to db
     emit goHome();
 }
 

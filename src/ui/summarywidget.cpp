@@ -3,12 +3,11 @@
 #include "ui_summarywidget.h"
 
 SummaryWidget::SummaryWidget(QWidget *parent) :
-    QWidget(parent),
+    WidgetForStack(parent),
     ui(new Ui::SummaryWidget)
 {
     ui->setupUi(this);
-    this->setLayout(ui->verticalLayout);
-    ui->groupBox->setLayout(ui->formLayout);
+    this->setLayout(ui->gridLayout);
     ui->rbAllTime->setChecked(true);
     ui->deFrom->setDate(QDate::currentDate().addMonths(-1));
     ui->deTo->setDate(QDate::currentDate());
@@ -27,5 +26,7 @@ void SummaryWidget::on_rbPeriod_toggled(bool checked)
 
 void SummaryWidget::on_pushButton_clicked()
 {
-
+    //db_worker->saveNewOperation(this->m_operation.comment);
+    // load operations
+    emit goWait("Saving...");
 }

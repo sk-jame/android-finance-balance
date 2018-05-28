@@ -14,7 +14,6 @@ class OutcomeWidget : public WidgetForStack
     QList<QRadioButton*> radioList;
     QDialogButtonBox* btnBox;
     QVBoxLayout* lay;
-    QSpacerItem* spacer;
 public:
     explicit OutcomeWidget(QWidget* parent);
     ~OutcomeWidget();

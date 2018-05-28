@@ -1,13 +1,13 @@
 #ifndef SUMMARYWIDGET_H
 #define SUMMARYWIDGET_H
 
-#include <QWidget>
+#include "widgetforstack.h"
 
 namespace Ui {
 class SummaryWidget;
 }
 
-class SummaryWidget : public QWidget
+class SummaryWidget : public WidgetForStack
 {
     Q_OBJECT
 
