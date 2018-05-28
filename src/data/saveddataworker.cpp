@@ -59,27 +59,27 @@ void SavedDataWorker::process()
 {
     while(!isDone()){
         if (task_queue->hasTasks()){
-            Task task = task_queue->takeTask();
-            if (task.isValid()){
-                if (task.taskType() == Task::task_write){
-                    SaveDataTask* s_task = (SaveDataTask*)&task;
-                    task.setStatus((saveNewOperation(&s_task->operation()) == 0) ?
+            Task* task = task_queue->takeTask();
+            if (task != nullptr){
+                if (task->taskType() == Task::task_write){
+                    SaveDataTask* s_task = (SaveDataTask*)task;
+                    task->setStatus((saveNewOperation(&s_task->operation()) == 0) ?
                                        (SaveDataTask::status_success) :
                                        (SaveDataTask::status_failure));
                 }
-                else if (task.taskType() == Task::task_read){
-                    task.setStatus((readTask(((ReadDataTask*)&task)) == 0) ?
+                else if (task->taskType() == Task::task_read){
+                    task->setStatus((readTask(((ReadDataTask*)task)) == 0) ?
                                        (SaveDataTask::status_success) :
                                        (SaveDataTask::status_failure));
                 }
             }
 
-            if (task.status() == Task::status_success){
+            if (task->status() == Task::status_success){
                 task_queue->addFinishedTask(task);
             }
             else{
                 // TODO some block for exclude infinity loop
-                task_queue->addNewTask(&task);
+                task_queue->addNewTask(task);
             }
         }
         QThread::sleep(1);

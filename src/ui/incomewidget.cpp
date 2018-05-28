@@ -53,8 +53,9 @@ void IncomeWidget::onOk()
         this->m_operation.amount = this->m_operation.amount * -1;
     }
 
-    SaveDataTask task(this, this->m_operation);
-    task_queue->addNewTask(&task);
+    SaveDataTask* task = new SaveDataTask(this, this->m_operation);
+    task->setRemove_on_finish(true);
+    task_queue->addNewTask(task);
     emit notify("Операция добавлена в очередь на запись в базу");
     emit goHome();
 }

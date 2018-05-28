@@ -45,8 +45,9 @@ void AmountWidget::onOk()
         return;
     }
     this->m_operation.comment = leComment->text();
-    SaveDataTask task(this, this->m_operation);
-    task_queue->addNewTask(&task);
+    SaveDataTask* task = new SaveDataTask(this, this->m_operation);
+    task->setRemove_on_finish(true);
+    task_queue->addNewTask(task);
     emit notify("Операция добавлена в очередь на запись в базу");
     emit goHome();
 }

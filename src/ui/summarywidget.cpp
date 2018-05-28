@@ -9,9 +9,11 @@ SummaryWidget::SummaryWidget(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setLayout(ui->gridLayout);
-    ui->rbAllTime->setChecked(true);
+    ui->rbAllTime->setChecked(false);
     ui->deFrom->setDate(QDate::currentDate().addMonths(-1));
+    ui->deFrom->setTime(QTime(0,0));
     ui->deTo->setDate(QDate::currentDate());
+    ui->deTo->setTime(QTime(0,0));
 }
 
 SummaryWidget::~SummaryWidget()
@@ -31,13 +33,16 @@ void SummaryWidget::on_pushButton_clicked()
     // load operations
     ReadDataTask task(this);
     task.setDt_from(ui->deFrom->dateTime());
-    task.setDt_from(ui->deTo->dateTime());
+    if (!ui->deTo->dateTime().isValid()){
+        ui->deTo->setDateTime(QDateTime::currentDateTime());
+    }
+    task.setDt_to(ui->deTo->dateTime());
     int uid = task_queue->addNewTask(&task);
     emit goWait("Loading...");
     while(1) {
-        Task task = task_queue->getFinishedTask(uid);
-        if (task.isValid()){
-            qDebug()<<task.uid();
+        Task* task = task_queue->takeFinishedTask(uid);
+        if (task != nullptr){
+            qDebug()<<task->uid();
         }
         qDebug()<<"Some I'm still waiting...";
     }

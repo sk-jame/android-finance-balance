@@ -7,7 +7,13 @@ Task::Task(QWidget *widget) :
     m_status(status_not_started),
     m_error(QString()),
     m_isValid(true),
-    m_uid(-1)
+    m_uid(-1),
+    m_remove_on_finish(false)
+{
+
+}
+
+Task::~Task()
 {
 
 }
@@ -20,6 +26,16 @@ qint32 Task::uid() const
 void Task::setUid(const qint32 &uid)
 {
     m_uid = uid;
+}
+
+void Task::setRemove_on_finish(bool value)
+{
+    m_remove_on_finish = value;
+}
+
+bool Task::shouldRemove_on_finish()
+{
+    return m_remove_on_finish;
 }
 
 Task::Task() :
@@ -70,6 +86,11 @@ SaveDataTask::SaveDataTask():
 
 }
 
+SaveDataTask::~SaveDataTask()
+{
+
+}
+
 SaveDataTask::SaveDataTask(QWidget *widget, const Operation &operation):
     Task(widget),
     m_operation(operation)
@@ -89,70 +110,80 @@ TaskQueue::TaskQueue(){
 
 TaskQueue::~TaskQueue(){
     mutex_new_op.lock();
+    while(!_task_wait.isEmpty()){
+        delete _task_wait.takeLast();
+    }
     _task_wait.clear();
     mutex_new_op.unlock();
     mutex_finished.lock();
+    while(!_task_finished.isEmpty()){
+        delete _task_finished.takeLast();
+    }
     _task_finished.clear();
     mutex_finished.unlock();
 }
 
-int TaskQueue::addNewTask(const Task *task) {
+int TaskQueue::addNewTask(Task *task) {
     mutex_new_op.lock();
-    _task_wait.push_back(*task);
-    if (_task_wait.last().uid() == -1){
+    _task_wait.push_back(task);
+    if (_task_wait.last()->uid() == -1){
         // TODO generate new uid;
         static int id = 0;
-        _task_wait.last().setUid(id++);
+        _task_wait.last()->setUid(id++);
     }
     mutex_new_op.unlock();
-    return _task_wait.last().uid();
+    return _task_wait.last()->uid();
 }
 
-void TaskQueue::addFinishedTask(const Task &task)
+void TaskQueue::addFinishedTask(Task *task)
 {
+    if (task->shouldRemove_on_finish()){
+        delete task;
+        return;
+    }
     mutex_finished.lock();
     _task_finished.push_back(task);
     mutex_finished.unlock();
 }
 
-Task TaskQueue::takeTask(){
+Task *TaskQueue::takeTask(){
     QMutexLocker(&this->mutex_new_op);
     mutex_new_op.lock();
     if (!_task_wait.isEmpty()){
         return _task_wait.takeFirst();
     }
     mutex_new_op.unlock();
-    return Task();
+    return nullptr;
 }
 
 bool TaskQueue::hasTasks() {
     return !_task_wait.isEmpty();
 }
 
-QVector<Task> TaskQueue::getTasks() {
+QVector<Task*> TaskQueue::getTasks() {
     mutex_new_op.lock();
-    QVector<Task> cpy = _task_wait;
+    QVector<Task*> cpy = _task_wait;
     mutex_new_op.unlock();
     return cpy;
 }
 
-QVector<Task> TaskQueue::getFinishedTask()
+QVector<Task*> TaskQueue::takeFinishedTask()
 {
     mutex_finished.lock();
-    QVector<Task> cpy = _task_finished;
+    QVector<Task*> cpy = _task_finished;
     mutex_finished.unlock();
     return cpy;
 }
 
-Task TaskQueue::getFinishedTask(qint32 uid)
+Task *TaskQueue::takeFinishedTask(qint32 uid)
 {
     QMutexLocker(&this->mutex_finished);
     for(int i = 0; i < _task_finished.count(); i++){
-        if (_task_finished[i].uid() == uid){
+        if (_task_finished[i]->uid() == uid){
             return _task_finished.takeAt(i);
         }
     }
-    return Task();
+    return nullptr;
 }
 
 /******************************** Read data task ******************************/
@@ -180,6 +211,11 @@ ReadDataTask::ReadDataTask() :
     Task()
 {
 
+}
+
+ReadDataTask::~ReadDataTask()
+{
+    m_read_data.clear();
 }
 
 ReadDataTask::ReadDataTask(QWidget *widget) :

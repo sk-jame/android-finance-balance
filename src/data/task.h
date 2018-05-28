@@ -26,6 +26,7 @@ public:
 
     Task();
     Task(QWidget* widget);
+    virtual ~Task();
     QWidget *lastWidget() const;
     QString error() const;
     void setError(const QString &error);
@@ -36,8 +37,10 @@ public:
     virtual int taskType();
     qint32 uid() const;
     void setUid(const qint32 &uid);
-
+    void setRemove_on_finish(bool value);
+    bool shouldRemove_on_finish();
 protected:
+    bool m_remove_on_finish;
     TaskType m_type;
     QWidget* m_lastWidget;
     TaskStatus m_status;
@@ -49,6 +52,7 @@ class SaveDataTask : public Task
 {
 public:
     SaveDataTask();
+    virtual ~SaveDataTask();
     explicit SaveDataTask(QWidget* widget, const Operation& operation);
     Operation &operation();
 private:
@@ -61,6 +65,7 @@ class ReadDataTask : public Task
     QDateTime m_dt_from, m_dt_to;
 public:
     ReadDataTask();
+    virtual ~ReadDataTask();
     explicit ReadDataTask(QWidget* widget);
     void addOperation(const Operation& op);
     QList<Operation> read_data() const;
@@ -73,19 +78,19 @@ public:
 
 class TaskQueue
 {
-    QVector<Task> _task_wait, _task_finished;
+    QVector<Task*> _task_wait, _task_finished;
     QMutex mutex_new_op, mutex_finished;
 public:
     TaskQueue();
     ~TaskQueue();
-    int addNewTask(const Task *task);
-    void addFinishedTask(const Task &task);
-    Task takeTask();
+    int addNewTask(Task *task);
+    void addFinishedTask(Task *task);
+    Task* takeTask();
     bool hasTasks();
-    QVector<Task> getTasks();
-    QVector<Task> getFinishedTask();
+    QVector<Task*> getTasks();
+    QVector<Task*> takeFinishedTask();
 
-    Task getFinishedTask(qint32 uid);
+    Task* takeFinishedTask(qint32 uid);
 };
 
 #endif // TASK_H
