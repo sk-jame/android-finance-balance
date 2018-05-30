@@ -8,7 +8,8 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    wait_dialog(this)
 {
     ui->setupUi(this);
     this->setCentralWidget(ui->stackedWidget);
@@ -25,12 +26,16 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(w, &WidgetForStack::goNext, this, &MainWindow::onGoNext);
         connect(w, &WidgetForStack::goBack, this, &MainWindow::onGoBack);
         connect(w, &WidgetForStack::goHome, this, &MainWindow::restoreMain);
+        connect(w, &WidgetForStack::goWaitTask, this, &MainWindow::onWaitTask);
+        connect(this, &MainWindow::error, w, &WidgetForStack::operation_error);
     }
+    wait_dialog.close();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    emit finished();
 }
 
 void MainWindow::onGoBack()
@@ -77,4 +82,30 @@ void MainWindow::on_pbAddIn_4_clicked()
 void MainWindow::on_pbSummary_4_clicked()
 {
     ui->stackedWidget->setCurrentIndex(summaryWidgetIndex);
+}
+
+void MainWindow::onWaitTask(int uid, QString str_wait_for, QString str_success, QString str_error)
+{
+
+    wait_dialog.setWindowTitle(str_wait_for + QString::asprintf(" .Task #%i", uid));
+    wait_dialog.setMinimum(0);
+    wait_dialog.setMaximum(1);
+    wait_dialog.setModal(true);
+
+    wait_task_uid = uid;
+    wait_dialog.showMaximized();
+}
+
+void MainWindow::onFinishedTask(Task* task)
+{
+    if (wait_task_uid == task->uid()){
+        wait_dialog.close();
+        for(int i = 0; i < ui->stackedWidget->count(); i++){
+            if (ui->stackedWidget->widget(i) == task->lastWidget()){
+                task->lastWidget()->operation_finished(task);
+                ui->stackedWidget->setCurrentIndex(i);
+                break;
+            }
+        }
+    }
 }

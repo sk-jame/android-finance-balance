@@ -2,6 +2,8 @@
 #include <QDate>
 #include "summarywidget.h"
 #include "ui_summarywidget.h"
+#include "data/datacontainer.h"
+#include "dbtableview.h"
 
 SummaryWidget::SummaryWidget(QWidget *parent) :
     WidgetForStack(parent),
@@ -31,20 +33,28 @@ void SummaryWidget::on_pushButton_clicked()
 {
     //db_worker->saveNewOperation(this->m_operation.comment);
     // load operations
-    ReadDataTask task(this);
-    task.setDt_from(ui->deFrom->dateTime());
+    ReadDataTask *task = new ReadDataTask(this);
+    task->setDt_from(ui->deFrom->dateTime());
     if (!ui->deTo->dateTime().isValid()){
         ui->deTo->setDateTime(QDateTime::currentDateTime());
     }
-    task.setDt_to(ui->deTo->dateTime());
-    int uid = task_queue->addNewTask(&task);
-    emit goWait("Loading...");
-    while(1) {
-        Task* task = task_queue->takeFinishedTask(uid);
-        if (task != nullptr){
-            qDebug()<<task->uid();
-        }
-        qDebug()<<"Some I'm still waiting...";
+    task->setDt_to(ui->deTo->dateTime());
+    int uid = task_queue->addNewTask(task);
+    if (uid < 0){
+        qDebug()<<__FUNCTION__<<uid;
+        exit(1);
     }
+    emit goWaitTask(uid, "Loading...");
+}
 
+void SummaryWidget::operation_finished(Task* ftask)
+{
+    ReadDataTask* task = static_cast<ReadDataTask*>(ftask);
+    DataContainer dc(this);
+    dc.setOperations(task->read_data());
+    ui->labelInData->setText(QString::number(dc.totalIncome()));
+    ui->labelOutData->setText(QString::number(dc.totalOutcome()));
+    ui->labelSavedData->setText(QString::number(dc.totalSaved()));
+    task_queue->removeTask(task);
+    delete task;
 }

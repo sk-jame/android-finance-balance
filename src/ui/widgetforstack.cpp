@@ -1,8 +1,10 @@
 #include <QKeyEvent>
 #include "widgetforstack.h"
+#include <QDebug>
 
 Operation WidgetForStack::m_operation = Operation();
 TaskQueue* WidgetForStack::task_queue = nullptr;
+bool WidgetForStack::m_canContinue = false;
 
 WidgetForStack::WidgetForStack(QWidget *parent)
     : QWidget(parent)
@@ -18,4 +20,10 @@ void WidgetForStack::keyReleaseEvent(QKeyEvent *event)
 
 void WidgetForStack::setTaskQueue(TaskQueue *dbw){
     task_queue = dbw;
+}
+
+void WidgetForStack::operation_error(QString error, int code)
+{
+    m_canContinue = false;
+    qDebug()<<error<<"Code:"<<code;
 }

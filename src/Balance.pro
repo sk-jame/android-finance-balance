@@ -17,6 +17,8 @@ TEMPLATE = app
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
 
+DEFINES += DB_FORMAT_VERSION=1
+
 # DEFINES += NOT_DEFAULT_STYLE_ALLOWED
 
 # You can also make your code fail to compile if you use deprecated APIs.
@@ -26,26 +28,30 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-			main.cpp \
-			ui/mainwindow.cpp \
-			ui/outcomewidget.cpp \
-			ui/widgetforstack.cpp \
-			ui/amountwidget.cpp \
-			data/saveddataworker.cpp \
-			ui/incomewidget.cpp \
-			ui/summarywidget.cpp \
-    data/task.cpp
+            main.cpp \
+            ui/mainwindow.cpp \
+            ui/outcomewidget.cpp \
+            ui/widgetforstack.cpp \
+            ui/amountwidget.cpp \
+            ui/incomewidget.cpp \
+            ui/summarywidget.cpp \
+            ui/dbtableview.cpp \
+            data/task.cpp \
+            data/databaseworker.cpp \
+            data/datacontainer.cpp
 
 HEADERS += \
-        	ui/mainwindow.h \
-			ui/outcomewidget.h \
-        	ui/widgetforstack.h \
-        	ui/amountwidget.h \
-			data/saveddataworker.h \
-        	ui/incomewidget.h \
-        	ui/summarywidget.h \
-			data/operations.h \
-    data/task.h
+            ui/mainwindow.h \
+            ui/outcomewidget.h \
+            ui/widgetforstack.h \
+            ui/amountwidget.h \
+            ui/incomewidget.h \
+            ui/summarywidget.h \
+            ui/dbtableview.h \
+            data/operations.h \
+            data/task.h \
+            data/databaseworker.h \
+            data/datacontainer.h
 
 FORMS += \
             ui/mainwindow.ui \

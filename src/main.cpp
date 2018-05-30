@@ -2,7 +2,7 @@
 #include <QApplication>
 #include <QTextStream>
 #include <QFile>
-#include "data/saveddataworker.h"
+#include "data/databaseworker.h"
 #include "ui/widgetforstack.h"
 
 int main(int argc, char *argv[])
@@ -23,9 +23,23 @@ int main(int argc, char *argv[])
 
     TaskQueue task_queue;
     MainWindow w;
-    SavedDataWorker database_worker(&task_queue);
+    DataBaseWorker database_worker(&task_queue);
+    if (database_worker.isGood() == false){
+        qDebug()<<"Something realy bad happens with database(QSql) or mb with db file (QFile)";
+        return -1;
+    }
     WidgetForStack::setTaskQueue(&task_queue);
+    QObject::connect(&w, &MainWindow::finished, &database_worker, &DataBaseWorker::setDone);
+    QObject::connect(&w, &MainWindow::error, &database_worker, &DataBaseWorker::error, Qt::QueuedConnection);
+    QObject::connect(&task_queue, &TaskQueue::finished_task, &w, &MainWindow::onFinishedTask, Qt::QueuedConnection);
+
     w.show();
     database_worker.start();
-    return a.exec();
+    int ret_code = a.exec();
+
+    database_worker.setDone(true);
+    if (database_worker.stop(false))
+        database_worker.stop(true);
+
+    return ret_code;
 }

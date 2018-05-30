@@ -1,7 +1,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include "amountwidget.h"
-#include "data/saveddataworker.h"
+#include "data/databaseworker.h"
 
 AmountWidget::AmountWidget(QWidget* parent) : WidgetForStack(parent),
         labelAmount(new QLabel("Введите сумму", this)),
@@ -47,7 +47,11 @@ void AmountWidget::onOk()
     this->m_operation.comment = leComment->text();
     SaveDataTask* task = new SaveDataTask(this, this->m_operation);
     task->setRemove_on_finish(true);
-    task_queue->addNewTask(task);
+    int uid = task_queue->addNewTask(task);
+    if (uid < 0){
+        qDebug()<<__FUNCTION__<<uid;
+        exit(1);
+    }
     emit notify("Операция добавлена в очередь на запись в базу");
     emit goHome();
 }
