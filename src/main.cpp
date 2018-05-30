@@ -22,12 +22,12 @@ int main(int argc, char *argv[])
 #endif
 
     TaskQueue task_queue;
-    MainWindow w;
     DataBaseWorker database_worker(&task_queue);
     if (database_worker.isGood() == false){
         qDebug()<<"Something realy bad happens with database(QSql) or mb with db file (QFile)";
         return -1;
     }
+    MainWindow w;
     WidgetForStack::setTaskQueue(&task_queue);
     QObject::connect(&w, &MainWindow::finished, &database_worker, &DataBaseWorker::setDone);
     QObject::connect(&w, &MainWindow::error, &database_worker, &DataBaseWorker::error, Qt::QueuedConnection);
