@@ -205,10 +205,14 @@ int DataBaseWorker::saveNewOperation(const Operation* op)
     return 0;
 }
 
+typedef QPair<QString, Operation::EDirection> StringWithDirection;
+
+typedef QList<StringWithDirection> StrDirList;
+
 int DataBaseWorker::readTask(ReadDataTask* task)
 {
     DataFilter* filter = &task->filter;
-    QList<QPair<QString , Operation::EDirection> > requests;
+    StrDirList requests;
     QStringList additionalWhereList;
 
     if (filter->checkType(DataFilter::filter_all_tables)){
@@ -221,16 +225,24 @@ int DataBaseWorker::readTask(ReadDataTask* task)
     }
     if (filter->checkType(DataFilter::filtered_by_date)){
         additionalWhereList.push_back(QString::asprintf("date BETWEEN \'%s\' AND \'%s\'",
-                                                        dateFilter().first.date().toString("yyyy-MM-dd").toStdString().c_str(),
-                                                        dateFilter().second.date().toString("yyyy-MM-dd").toStdString().c_str()
+                                                        filter->dateFilter.first.date().toString("yyyy-MM-dd").toStdString().c_str(),
+                                                        filter->dateFilter.second.date().toString("yyyy-MM-dd").toStdString().c_str()
                                                         ));
     }
 
     if (filter->checkType(DataFilter::filtered_by_reason)){
-        additionalWhereList.push_back(QString::asprintf("reason = %i", filter->reasonFilter);
+        additionalWhereList.push_back(QString::asprintf("reason = %i", filter->reasonFilter));
     }
 
-    foreach (QPair<QString , Operation::EDirection> request, requests) {
+    foreach (StringWithDirection request, requests) {
+        QString req = request.first;
+        if (!additionalWhereList.isEmpty()){
+            req += " WHERE ";
+            foreach (QString str, additionalWhereList) {
+                req += " " + str;
+            }
+            qDebug() << req;
+        }
         if (!execQuery(request.first))
             return -1;
 
@@ -239,7 +251,7 @@ int DataBaseWorker::readTask(ReadDataTask* task)
             op.date_time.setDate(QDate::fromString(query.value(db_columns().idx_date).toString(), "yyyy-MM-dd"));
             op.date_time.setTime(QTime::fromString(query.value(db_columns().idx_time).toString(), "HH:mm:ss"));
             op.dir = request.second;
-            op.reason = Operation::getReasonsNames.at(query.value(db_columns().idx_reason).toUInt());
+            op.reason = Operation::getReasonsNames().at(query.value(db_columns().idx_reason).toUInt());
             op.amount = query.value(db_columns().idx_amount).toFloat();
             op.comment = query.value(db_columns().idx_comment).toString();
             task->addOperation(op);

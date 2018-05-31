@@ -89,7 +89,7 @@ QList<QVector<QVariant> > DataContainer::getTable(TableTypes type) const
             }
             else{
                 tmp.clear();
-                tmp << tmp_date.date() << "Outcome" << tmp_amount;
+                tmp << tmp_date.toString("yyyy-MM-dd") << "Outcome" << tmp_amount;
                 table.push_back(tmp);
                 tmp_date = op->date_time.date();
                 tmp_amount = op->amount;
@@ -105,7 +105,7 @@ QList<QVector<QVariant> > DataContainer::getTable(TableTypes type) const
             }
             else{
                 tmp.clear();
-                tmp << tmp_date.date() << "Income" << tmp_amount;
+                tmp << tmp_date.toString("yyyy-MM-dd") << "Income" << tmp_amount;
                 table.push_back(tmp);
                 tmp_date = op->date_time.date();
                 tmp_amount = op->amount;
@@ -116,7 +116,7 @@ QList<QVector<QVariant> > DataContainer::getTable(TableTypes type) const
         tmp << "Date"  << "Direction" << "Amount";
         table.push_back(tmp);
         tmp_amount = 0;
-        tmp_date.month() = m_operations.first()->date_time.date();
+        tmp_date = m_operations.first()->date_time.date();
         foreach (Operation* op, m_operations) {
             if (op->dir == Operation::outcome)
                 continue;
@@ -128,7 +128,7 @@ QList<QVector<QVariant> > DataContainer::getTable(TableTypes type) const
             }
             else{
                 tmp.clear();
-                tmp << tmp_date.date() << "Outcome" << tmp_amount;
+                tmp << tmp_date.toString("yyyy-MM") << "Outcome" << tmp_amount;
                 table.push_back(tmp);
                 tmp_date = op->date_time.date();
                 tmp_amount = op->amount;
@@ -136,7 +136,7 @@ QList<QVector<QVariant> > DataContainer::getTable(TableTypes type) const
         }
 
         tmp_amount = 0;
-        tmp_date.month() = m_operations.first()->date_time.date();
+        tmp_date = m_operations.first()->date_time.date();
         foreach (Operation* op, m_operations) {
             if (op->dir == Operation::income)
                 continue;
@@ -147,7 +147,7 @@ QList<QVector<QVariant> > DataContainer::getTable(TableTypes type) const
             }
             else{
                 tmp.clear();
-                tmp << tmp_date.date() << "Income" << tmp_amount;
+                tmp << tmp_date.toString("yyyy-MM") << "Income" << tmp_amount;
                 table.push_back(tmp);
                 tmp_date = op->date_time.date();
                 tmp_amount = op->amount;
@@ -178,7 +178,7 @@ QList<QVector<QVariant> > DataContainer::getTable(TableTypes type) const
         tmp << "Date"  << "Amount";
         table.push_back(tmp);
         tmp_amount = 0;
-        tmp_date.month() = m_operations.first()->date_time.date();
+        tmp_date = m_operations.first()->date_time.date();
         foreach (Operation* op, m_operations) {
             if (tmp_date.month() == op->date_time.date().month() &&
                 tmp_date.year() == op->date_time.date().year()){
@@ -189,7 +189,7 @@ QList<QVector<QVariant> > DataContainer::getTable(TableTypes type) const
             }
             else{
                 tmp.clear();
-                tmp << tmp_date.date() << "Outcome" << tmp_amount;
+                tmp << tmp_date.toString("yyyy-MM") << "Outcome" << tmp_amount;
                 table.push_back(tmp);
                 tmp_date = op->date_time.date();
                 tmp_amount = op->amount;
@@ -210,7 +210,7 @@ QList<QVector<QVariant> > DataContainer::getTable(TableTypes type) const
             }
             else{
                 tmp.clear();
-                tmp << tmp_date.date() << tmp_amount;
+                tmp << tmp_date.toString("yyyy-MM-dd") << tmp_amount;
                 table.push_back(tmp);
                 tmp_date = op->date_time.date();
                 if (op->dir == Operation::outcome)

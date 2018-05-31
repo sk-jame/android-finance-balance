@@ -9,12 +9,6 @@
 class DatabaseTableWidget : public QTableSortWidget
 {
     Q_OBJECT
-
-    Q_PROPERTY(ShowTypes showType READ showType WRITE setShowType NOTIFY showTypeChanged)
-    Q_PROPERTY(QString table READ table WRITE setTable NOTIFY tableNameChanged)
-    Q_PROPERTY(QPair<QDateTime, QDateTime> dateFilter READ dateFilter WRITE setDateFilter NOTIFY dateFilterChanged)
-    Q_PROPERTY(Operation::Reasons reasonFilter READ reasonFilter WRITE setReasonFilter NOTIFY reasonFilterChanged)
-
 public:
     DataContainer::TableTypes tableType_current, tableType_request;
     DataFilter filter;
