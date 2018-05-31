@@ -1,7 +1,5 @@
 <RCC>
-    <qresource prefix="/db">
-        <file>.balance.sqlite</file>
-    </qresource>
+    <qresource prefix="/db"/>
     <qresource prefix="/ui">
         <file>style.qss</file>
     </qresource>

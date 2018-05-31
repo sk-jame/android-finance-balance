@@ -4,6 +4,7 @@
 #include "operations.h"
 #include <QMutexLocker>
 #include <QList>
+#include <QVector>
 #include <QObject>
 
 class WidgetForStack;

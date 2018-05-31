@@ -7,8 +7,41 @@
 #include <QDebug>
 #include <QMouseEvent>
 #include "data/databaseworker.h"
-
+#include <QPainter>
 #define DB_CONNECTION_NAME ("dataWidget_connection")
+
+//class MyDBDelegate : public QItemDelegate
+//{
+//public:
+//    MyDBDelegate(QObject *parent = Q_NULLPTR)
+//        : QItemDelegate(parent)
+//    {
+//    }
+
+//    // QAbstractItemDelegate interface
+//public:
+//    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+//    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+//};
+
+//void MyDBDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+//{
+//    if (index.column() == DataBaseWorker::db_columns().idx_reason){
+//        QAbstractItemModel* model = const_cast<QAbstractItemModel*>(index.model());
+//        model->setData(index, Operation::getTypesNames().at(index.data().toInt()), Qt::DisplayRole);
+//    }
+//    QItemDelegate::paint(painter, option, index);
+//}
+
+//QSize MyDBDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+//{
+//    QFontMetrics fm(option.font);
+//    if (index.column() == DataBaseWorker::db_columns().idx_reason){
+//        return fm.size(0, Operation::getTypesNames().at(index.data().toInt()));
+//    }
+
+//    return fm.size(0, index.data().toString()); // QAbstractItemDelegate::sizeHint(option, index);
+//}
 
 DBTableView::DBTableView(QWidget *parent) :
     QTableView(parent),
@@ -52,6 +85,9 @@ void DBTableView::mouseReleaseEvent(QMouseEvent *event){
     if ( event->button() == Qt::RightButton ){
         emit showContextMenu( event->screenPos().toPoint() );
     }
+    else if (indexAt(event->pos()).column() == DataBaseWorker::db_columns().idx_reason){
+        setToolTip(Operation::getTypesNames().at(indexAt(event->pos()).data().toInt()));
+    }
     QTableView::mouseReleaseEvent(event);
 }
 
@@ -69,6 +105,7 @@ QList<QStringList> DBTableView::getCurrentItems(){
 
 void DBTableView::enableDataWidget(bool enable){
     if ( enable ){
+//        this->setItemDelegateForColumn(DataBaseWorker::db_columns().idx_reason, new MyDBDelegate());
         db.open();
         sqlmodel = new QSqlTableModel(parent(), db);
         proxyModel = new QSortFilterProxyModel(parent());
@@ -76,22 +113,26 @@ void DBTableView::enableDataWidget(bool enable){
         setModel( proxyModel );
         connect( this, SIGNAL(destroyed()), sqlmodel, SLOT(deleteLater()));
         connect( this, SIGNAL(destroyed()), proxyModel, SLOT(deleteLater()));
-        selectDataBaseTable(0);
+        selectDataBaseTable(DataBaseWorker::income_table_name);
+
     }
     else{
         db.close();
     }
-    this->setEnabled( enable );
+    this->setEnabled(enable);
 }
 
 void DBTableView::selectDataBaseTable(QString table){
-    QStringList head;
-    head << "#" << "Date" << "Time" << "Reason" << "Amount";
     sqlmodel->setTable(table );
     sqlmodel->select();
-    for(int i = 0; i < head.count(); i++ ){
-        sqlmodel->setHeaderData(i, Qt::Horizontal, QVariant(head.at(i)));
+    static int init = 0;
+    for(int i = 0; i < DataBaseWorker::db_columns().column_names.count(); i++ ){
+//        if (init == 0){
+//            this->setItemDelegateForColumn(i, new MyDBDelegate(this));
+//        }
+        sqlmodel->setHeaderData(i, Qt::Horizontal, QVariant(DataBaseWorker::db_columns().column_names.at(i)));
     }
+    init = 1;
     hide();
     show();
 }

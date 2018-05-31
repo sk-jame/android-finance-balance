@@ -76,14 +76,16 @@ public:
     {}
 
     static const QStringList getTypesNames() {
-        QStringList tmpList;
-        tmpList.push_back("Еда");
-        tmpList.push_back("Развлечения");
-        tmpList.push_back("Помощь");
-        tmpList.push_back("Отложить");
-        tmpList.push_back("Квартплата");
-        tmpList.push_back("Кредиты");
-        tmpList.push_back("Транспорт");
+        static QStringList tmpList = QStringList();
+        if (tmpList.isEmpty()){
+            tmpList.push_back("Еда");
+            tmpList.push_back("Развлечения");
+            tmpList.push_back("Помощь");
+            tmpList.push_back("Отложить");
+            tmpList.push_back("Квартплата");
+            tmpList.push_back("Кредиты");
+            tmpList.push_back("Транспорт");
+        }
         return tmpList;
     }
 
