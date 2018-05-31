@@ -17,9 +17,8 @@ public:
 
 private slots:
     void on_rbPeriod_toggled(bool checked);
-
     void on_pushButton_clicked();
-
+    void on_TableWidget_updateData();
 private:
     Ui::SummaryWidget *ui;
 

@@ -42,12 +42,12 @@ void IncomeWidget::onOk()
         QMessageBox::critical(this, "Херь в сумме", "Сумму в число не получается перевести из строки в число");
         return;
     }
-    this->m_operation.type.clear();
+    this->m_operation.reason.clear();
     this->m_operation.dir = Operation::income;
     this->m_operation.comment = leComment->text();
 
     if (cbFromSaved->isChecked()){
-        this->m_operation.type = "Отложить";
+        this->m_operation.reason = "Отложить";
         this->m_operation.dir = Operation::outcome;
         this->m_operation.comment = leComment->text();
         this->m_operation.amount = this->m_operation.amount * -1;

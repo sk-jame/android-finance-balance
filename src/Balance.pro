@@ -36,9 +36,12 @@ SOURCES += \
             ui/incomewidget.cpp \
             ui/summarywidget.cpp \
             ui/dbtableview.cpp \
+            ui/qtablesortwidget.cpp \
+            ui/databasetablewidget.cpp \
             data/task.cpp \
             data/databaseworker.cpp \
-            data/datacontainer.cpp
+            data/datacontainer.cpp \
+            common/logger.cpp
 
 HEADERS += \
             ui/mainwindow.h \
@@ -48,14 +51,17 @@ HEADERS += \
             ui/incomewidget.h \
             ui/summarywidget.h \
             ui/dbtableview.h \
+            ui/qtablesortwidget.h \
+            ui/databasetablewidget.h \
             data/operations.h \
             data/task.h \
             data/databaseworker.h \
-            data/datacontainer.h
+            data/datacontainer.h \
+            common/logger.h
 
 FORMS += \
             ui/mainwindow.ui \
-			ui/summarywidget.ui
+            ui/summarywidget.ui
 
 CONFIG += mobility
 MOBILITY = 

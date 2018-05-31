@@ -86,7 +86,7 @@ void DBTableView::mouseReleaseEvent(QMouseEvent *event){
         emit showContextMenu( event->screenPos().toPoint() );
     }
     else if (indexAt(event->pos()).column() == DataBaseWorker::db_columns().idx_reason){
-        setToolTip(Operation::getTypesNames().at(indexAt(event->pos()).data().toInt()));
+        setToolTip(Operation::getReasonsNames().at(indexAt(event->pos()).data().toInt()));
     }
     QTableView::mouseReleaseEvent(event);
 }
@@ -125,14 +125,9 @@ void DBTableView::enableDataWidget(bool enable){
 void DBTableView::selectDataBaseTable(QString table){
     sqlmodel->setTable(table );
     sqlmodel->select();
-    static int init = 0;
     for(int i = 0; i < DataBaseWorker::db_columns().column_names.count(); i++ ){
-//        if (init == 0){
-//            this->setItemDelegateForColumn(i, new MyDBDelegate(this));
-//        }
         sqlmodel->setHeaderData(i, Qt::Horizontal, QVariant(DataBaseWorker::db_columns().column_names.at(i)));
     }
-    init = 1;
     hide();
     show();
 }

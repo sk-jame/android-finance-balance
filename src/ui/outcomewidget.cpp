@@ -35,7 +35,7 @@ void OutcomeWidget::onOk()
     this->m_operation.dir = Operation::outcome;
     foreach(QRadioButton* btn, radioList){
         if (btn->isChecked()){
-            this->m_operation.type = btn->text();
+            this->m_operation.reason = btn->text();
             break;
         }
     }
@@ -44,6 +44,6 @@ void OutcomeWidget::onOk()
 
 void OutcomeWidget::onCancel()
 {
-    this->m_operation.type = "";
+    this->m_operation.reason = "";
     emit goHome();
 }

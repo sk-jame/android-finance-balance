@@ -1,6 +1,8 @@
 #ifndef TASK_H
 #define TASK_H
 
+#include <QSqlQuery>
+#include "datacontainer.h"
 #include "operations.h"
 #include <QMutexLocker>
 #include <QList>
@@ -22,7 +24,8 @@ public:
 
     enum TaskType {
         task_write = 0,
-        task_read
+        task_read,
+        task_exec
     };
 
     Task();
@@ -42,6 +45,8 @@ public:
     bool shouldRemove_on_finish();
     int attempts() const;
     void attempts_inc();
+    void setLastWidget(WidgetForStack *lastWidget);
+
 protected:
     bool m_remove_on_finish;
     TaskType m_type;
@@ -67,18 +72,29 @@ private:
 class ReadDataTask : public Task
 {
     QList<Operation*> m_read_data;
-    QDateTime m_dt_from, m_dt_to;
 public:
+    DataFilter filter;
+
     ReadDataTask();
     virtual ~ReadDataTask();
     explicit ReadDataTask(WidgetForStack* widget);
     void addOperation(const Operation& op);
     const QList<Operation *> &read_data() const;
+};
 
-    QDateTime dt_from() const;
-    void setDt_from(const QDateTime &dt_from);
-    QDateTime dt_to() const;
-    void setDt_to(const QDateTime &dt_to);
+class ExecQueryTask : public Task
+{
+public:
+    ExecQueryTask();
+    ExecQueryTask(const QString& request);
+    explicit ExecQueryTask(WidgetForStack* widget, const QString& request);
+    virtual ~ExecQueryTask();
+    void setQuery(const QSqlQuery& source);
+    const QSqlQuery &query() const;
+    QString request() const;
+private:
+    QString m_request;
+    QSqlQuery m_query;
 };
 
 class TaskQueue : public QObject

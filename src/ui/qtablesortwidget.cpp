@@ -3,9 +3,9 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QKeyEvent>
-#include "logger.h"
+#include "common/logger.h"
 #include <QMenu>
-
+#include <QMetaType>
 #include <QDialog>
 #include <QLabel>
 #include <QLineEdit>

@@ -14,25 +14,26 @@ public:
         outcome
     };
 
-    enum Types{
-        type_food,
-        type_entertainment,
-        type_charity,
-        type_saveMoney,
-        type_apartment,
-        type_credits,
-        type_transport
+    enum Reasons{
+        reason_food,
+        reason_entertainment,
+        reason_charity,
+        reason_saveMoney,
+        reason_apartment,
+        reason_credits,
+        reason_transport,
+        reason_last
     };
 
     EDirection  dir;
-    QString     type;
+    QString     reason;
     QString     comment;
     qreal       amount;
     QDateTime   date_time;
 
     Operation() :
         dir(income),
-        type(""),
+        reason(""),
         comment(""),
         amount(0),
         date_time(QDateTime::currentDateTime())
@@ -40,7 +41,7 @@ public:
 
     Operation(Operation& another) :
         dir(another.dir),
-        type(another.type),
+        reason(another.reason),
         comment(another.comment),
         amount(another.amount),
         date_time(another.date_time)
@@ -48,7 +49,7 @@ public:
 
     Operation(const Operation& another) :
         dir(another.dir),
-        type(another.type),
+        reason(another.reason),
         comment(another.comment),
         amount(another.amount),
         date_time(another.date_time)
@@ -57,7 +58,7 @@ public:
     QJsonObject toJSON(bool with_date = true){
         QJsonObject obj;
         obj["direction"] = (dir==income)?"income":"outcome";
-        obj["type"] = type;
+        obj["type"] = reason;
         obj["amount"] = amount;
         obj["comment"] = comment;
 
@@ -69,13 +70,13 @@ public:
 
     Operation(const QJsonObject& json) :
         dir((json["direction"].toString() == "income") ? (income) : (outcome)),
-        type(json["type"].toString()),
+        reason(json["type"].toString()),
         comment(json["comment"].toString()),
         amount(json["amount"].toString().toFloat()),
         date_time(QDateTime::fromString(json["date_time"].toString(), "dd.MM.yyyy HH:mm:ss"))
     {}
 
-    static const QStringList getTypesNames() {
+    static const QStringList getReasonsNames() {
         static QStringList tmpList = QStringList();
         if (tmpList.isEmpty()){
             tmpList.push_back("Еда");
@@ -89,12 +90,8 @@ public:
         return tmpList;
     }
 
-    int typeIndex() const {
-        return getTypesNames().indexOf(type);
-    }
-
-    static QString index2type(int idx){
-        return getTypesNames().at(idx);
+    int reasonIndex() const {
+        return getReasonsNames().indexOf(reason);
     }
 };
 

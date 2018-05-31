@@ -31,30 +31,46 @@ void SummaryWidget::on_rbPeriod_toggled(bool checked)
 
 void SummaryWidget::on_pushButton_clicked()
 {
-    //db_worker->saveNewOperation(this->m_operation.comment);
-    // load operations
+//    ReadDataTask *task = new ReadDataTask(this);
+//    task->setDt_from(ui->deFrom->dateTime());
+//    if (!ui->deTo->dateTime().isValid()){
+//        ui->deTo->setDateTime(QDateTime::currentDateTime());
+//    }
+//    task->setDt_to(ui->deTo->dateTime());
+//    int uid = task_queue->addNewTask(task);
+//    if (uid < 0){
+//        qDebug()<<__FUNCTION__<<uid;
+//        exit(1);
+//    }
+//    emit goWaitTask(uid, "Loading...");
+}
+
+void SummaryWidget::on_TableWidget_updateData()
+{
     ReadDataTask *task = new ReadDataTask(this);
-    task->setDt_from(ui->deFrom->dateTime());
-    if (!ui->deTo->dateTime().isValid()){
-        ui->deTo->setDateTime(QDateTime::currentDateTime());
-    }
-    task->setDt_to(ui->deTo->dateTime());
+    task->filter = ui->tableWidget->filter;
     int uid = task_queue->addNewTask(task);
     if (uid < 0){
-        qDebug()<<__FUNCTION__<<uid;
-        exit(1);
+        qDebug() << __FUNCTION__ << uid;
+        return;
     }
     emit goWaitTask(uid, "Loading...");
 }
 
 void SummaryWidget::operation_finished(Task* ftask)
 {
-    ReadDataTask* task = static_cast<ReadDataTask*>(ftask);
-    DataContainer dc(this);
-    dc.setOperations(task->read_data());
-    ui->labelInData->setText(QString::number(dc.totalIncome()));
-    ui->labelOutData->setText(QString::number(dc.totalOutcome()));
-    ui->labelSavedData->setText(QString::number(dc.totalSaved()));
-    task_queue->removeTask(task);
-    delete task;
+    if (ftask->taskType() == Task::task_read){
+        ReadDataTask* task = static_cast<ReadDataTask*>(ftask);
+        DataContainer dc(this);
+        dc.setOperations(task->read_data());
+        ui->labelInData->setText(QString::number(dc.totalIncome()));
+        ui->labelOutData->setText(QString::number(dc.totalOutcome()));
+        ui->labelSavedData->setText(QString::number(dc.totalSaved()));
+        ui->tableWidget->operationFinished(dc.getTable(ui->tableWidget->tableType_request));
+        task_queue->removeTask(task);
+        delete task;
+    }
+    else if (ftask->taskType() == Task::task_exec){
+
+    }
 }

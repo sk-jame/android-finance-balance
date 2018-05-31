@@ -51,7 +51,17 @@ void Task::attempts_inc()
     m_attempts++;
 }
 
+void Task::setLastWidget(WidgetForStack *lastWidget)
+{
+    m_lastWidget = lastWidget;
+    m_isValid = true;
+}
+
 Task::Task() :
+    m_uid(-1),
+    m_remove_on_finish(false),
+    m_status(status_not_started),
+    m_error(QString()),
     m_isValid(false),
     m_attempts(0)
 {
@@ -120,26 +130,6 @@ const Operation *SaveDataTask::operation() const
 }
 
 /******************************** Read data task ******************************/
-QDateTime ReadDataTask::dt_from() const
-{
-    return m_dt_from;
-}
-
-void ReadDataTask::setDt_from(const QDateTime &dt_from)
-{
-    m_dt_from = dt_from;
-}
-
-QDateTime ReadDataTask::dt_to() const
-{
-    return m_dt_to;
-}
-
-void ReadDataTask::setDt_to(const QDateTime &dt_to)
-{
-    m_dt_to = dt_to;
-}
-
 ReadDataTask::ReadDataTask() :
     Task()
 {
@@ -171,6 +161,45 @@ const QList<Operation *> &ReadDataTask::read_data() const
     return m_read_data;
 }
 
+/****************************** Execute query task ******************************/
+ExecQueryTask::ExecQueryTask() : Task()
+{
+
+}
+
+ExecQueryTask::ExecQueryTask(const QString &request)
+    : Task(),
+      m_request(request)
+{
+
+}
+
+ExecQueryTask::ExecQueryTask(WidgetForStack *widget, const QString &request)
+    : Task(widget),
+      m_request(request)
+{
+    m_type = (Task::task_exec);
+}
+
+ExecQueryTask::~ExecQueryTask()
+{
+
+}
+
+void ExecQueryTask::setQuery(const QSqlQuery &source)
+{
+    m_query = source;
+}
+
+const QSqlQuery &ExecQueryTask::query() const
+{
+    return m_query;
+}
+
+QString ExecQueryTask::request() const
+{
+    return m_request;
+}
 
 /*********************************** Tasks queue methods ***************************************/
 
