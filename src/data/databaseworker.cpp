@@ -263,6 +263,22 @@ int DataBaseWorker::readTask(ReadDataTask* task)
     return 0;
 }
 
+void DataBaseWorker::clearDataBase()
+{
+    if (sdb.isOpen()){
+        sdb.close();
+    }
+    QFile file(filename);
+    if (!file.remove()){
+        qDebug()<< "Unable to remove database file";
+        sdb.open();
+        return;
+    }
+
+    init_or_create_db(filename);
+    sdb.open();
+}
+
 bool DataBaseWorker::execQuery(QString req)
 {
     if (!query.exec(req)){

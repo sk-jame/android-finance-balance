@@ -195,7 +195,7 @@ void QTableSortWidget::copyToClipBoard(){
     cb->setText( cbStr );
 }
 
-void QTableSortWidget::showFindPopup(){
+void QTableSortWidget::showFindPopup(QPoint pos){
     if (searchDialogCreated) return;
 
     DEBUG_OUT_EX("Find dialog created\n");
@@ -216,6 +216,8 @@ void QTableSortWidget::showFindPopup(){
     connect(leFind, &QLineEdit::textChanged, this,  &QTableSortWidget::find);
 
     dialog->show();
+    if (!pos.isNull())
+        dialog->setGeometry(pos.x(), pos.y(), dialog->geometry().width(), dialog->geometry().height());
     dialog->raise();
     dialog->activateWindow();
     searchDialogCreated = true;
@@ -228,7 +230,7 @@ void QTableSortWidget::keyPressEvent(QKeyEvent *ke){
         copyToClipBoard();
     }
     else if (ke->key() == Qt::Key_F && ke->modifiers() == Qt::CTRL){
-        showFindPopup();
+        showFindPopup(QPoint());
     }
     else if (ke->key() == Qt::Key_Escape){
         clearSelection();
@@ -255,7 +257,7 @@ void QTableSortWidget::contextMenuShow(QMouseEvent *event)
         copyToClipBoard();
     }
     else{
-        showFindPopup();
+        showFindPopup(event->screenPos().toPoint());
     }
 }
 

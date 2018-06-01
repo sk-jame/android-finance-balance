@@ -54,7 +54,7 @@ protected:
     virtual void contextMenuShow(QMouseEvent *event);
 
     void copyToClipBoard();
-    void showFindPopup();
+    void showFindPopup(QPoint pos);
 
     inline void swapFunction(int rowAindex, int rowBindex);
     inline bool cmpDir(QTableWidgetItem* i1, QTableWidgetItem* i2, sortFunctionType cmp, int column);

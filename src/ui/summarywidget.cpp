@@ -9,6 +9,7 @@ SummaryWidget::SummaryWidget(QWidget *parent) :
     WidgetForStack(parent),
     ui(new Ui::SummaryWidget)
 {
+    this->setGeometry(this->geometry().x(), this->geometry().y(), 720, 1280);
     ui->setupUi(this);
     this->setLayout(ui->gridLayout);
     ui->deFrom->setDate(QDate::currentDate().addMonths(-1));
@@ -17,8 +18,6 @@ SummaryWidget::SummaryWidget(QWidget *parent) :
     ui->deTo->setTime(QTime(0,0));
     ui->tableWidget->show();
     connect(ui->tableWidget, &DatabaseTableWidget::updateDataRequest, this, &SummaryWidget::on_TableWidget_updateData);
-
-
 }
 
 SummaryWidget::~SummaryWidget()
@@ -99,6 +98,7 @@ void SummaryWidget::operation_finished(Task* ftask)
         ui->tableWidget->operationFinished(dc.getTable(ui->tableWidget->tableType_request));
         task_queue->removeTask(task);
         delete task;
+        qDebug()<<geometry();
     }
     else if (ftask->taskType() == Task::task_exec){
 

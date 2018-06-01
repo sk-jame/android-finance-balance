@@ -52,14 +52,12 @@ void MainWindow::init_labels()
 
 void MainWindow::onGoBack()
 {
-    if (ui->stackedWidget->currentIndex() == outcomeWidgetIndex){
-        restoreMain();
-    }
-    else if (ui->stackedWidget->currentIndex() == incomeWidgetIndex){
-        restoreMain();
-    }
-    else if (ui->stackedWidget->currentIndex() == amountWidgetIndex){
+    int i = ui->stackedWidget->currentIndex();
+    if (i == amountWidgetIndex){
         ui->stackedWidget->setCurrentIndex(outcomeWidgetIndex);
+    }
+    else{
+        restoreMain();
     }
 }
 

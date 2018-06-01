@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>155</width>
-    <height>274</height>
+    <width>512</width>
+    <height>637</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,8 +19,8 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>151</width>
-      <height>271</height>
+      <width>471</width>
+      <height>611</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -32,11 +32,23 @@
        <rect>
         <x>0</x>
         <y>10</y>
-        <width>156</width>
-        <height>261</height>
+        <width>431</width>
+        <height>531</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <property name="leftMargin">
+        <number>5</number>
+       </property>
+       <property name="topMargin">
+        <number>5</number>
+       </property>
+       <property name="rightMargin">
+        <number>5</number>
+       </property>
+       <property name="bottomMargin">
+        <number>5</number>
+       </property>
        <item>
         <widget class="QPushButton" name="pbAddOut_4">
          <property name="text">
@@ -48,6 +60,13 @@
         <widget class="QPushButton" name="pbAddIn_4">
          <property name="text">
           <string>Добавить Приходы</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pbDebs">
+         <property name="text">
+          <string>Управление Долгами</string>
          </property>
         </widget>
        </item>
@@ -137,6 +156,13 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pbSettings">
+         <property name="text">
+          <string>Настройки</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QPushButton" name="pbSummary_4">

@@ -1,5 +1,6 @@
 #include "databasetablewidget.h"
 #include <QDebug>
+#include <QHeaderView>
 #include <QMenu>
 
 DatabaseTableWidget::DatabaseTableWidget(QWidget *parent)
@@ -9,6 +10,7 @@ DatabaseTableWidget::DatabaseTableWidget(QWidget *parent)
 {
     filter.filterType = DataFilter::filter_disabled;
     this->setEnabled(true);
+    this->verticalHeader()->setHidden(true);
 }
 
 void DatabaseTableWidget::updateData()
@@ -25,6 +27,7 @@ void DatabaseTableWidget::operationFinished(QList<QVector<QVariant>* > data)
     }
     this->setSortingEnabled(false);
     this->clear();
+    this->verticalHeader()->setHidden(true);
     this->setRowCount(data.count() - 1);
     this->setColumnCount(data.first()->count());
     {
@@ -40,8 +43,6 @@ void DatabaseTableWidget::operationFinished(QList<QVector<QVariant>* > data)
     }
 
     this->update();
-//    this->hide();
-//    this->show();
     this->setSortingEnabled(true);
     tableType_current = tableType_request;
 }
@@ -84,7 +85,8 @@ void DatabaseTableWidget::contextMenuShow(QMouseEvent *event)
             lastSearchString = tmp_item->text();
             find(lastSearchString);
         }
-        showFindPopup();
+
+        showFindPopup(this->geometry().topLeft());
         return;
     }
     else if (res == actShowAll){

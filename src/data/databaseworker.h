@@ -92,6 +92,7 @@ public slots:
     void process_task();
     int saveNewOperation(const Operation *op);
     int readTask(ReadDataTask *task);
+    void clearDataBase();
 private:
     void process();
     bool init_or_create_db(QString path);
