@@ -50,7 +50,7 @@ public:
     qreal totalSaved();
     qreal totalDifference();
 
-    QList<QVector<QVariant> > getTable(TableTypes type) const;
+    QList<QVector<QVariant> *> getTable(TableTypes type) const;
 signals:
 
 public slots:

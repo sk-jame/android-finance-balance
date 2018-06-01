@@ -24,7 +24,7 @@ public slots:
      * @param table in vectors
      * Get requested data from task, and put it to table
      */
-    void operationFinished(QList<QVector<QVariant> > data);
+    void operationFinished(QList<QVector<QVariant> *> data);
 signals:
     void updateDataRequest(DataContainer::TableTypes type);
 };

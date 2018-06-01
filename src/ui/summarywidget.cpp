@@ -11,11 +11,11 @@ SummaryWidget::SummaryWidget(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setLayout(ui->gridLayout);
-    ui->rbAllTime->setChecked(false);
     ui->deFrom->setDate(QDate::currentDate().addMonths(-1));
     ui->deFrom->setTime(QTime(0,0));
     ui->deTo->setDate(QDate::currentDate());
     ui->deTo->setTime(QTime(0,0));
+    ui->tableWidget->show();
 }
 
 SummaryWidget::~SummaryWidget()
@@ -31,18 +31,18 @@ void SummaryWidget::on_rbPeriod_toggled(bool checked)
 
 void SummaryWidget::on_pushButton_clicked()
 {
-//    ReadDataTask *task = new ReadDataTask(this);
-//    task->setDt_from(ui->deFrom->dateTime());
-//    if (!ui->deTo->dateTime().isValid()){
-//        ui->deTo->setDateTime(QDateTime::currentDateTime());
-//    }
-//    task->setDt_to(ui->deTo->dateTime());
-//    int uid = task_queue->addNewTask(task);
-//    if (uid < 0){
-//        qDebug()<<__FUNCTION__<<uid;
-//        exit(1);
-//    }
-//    emit goWaitTask(uid, "Loading...");
+    ui->tableWidget->filter.dateFilter.first = ui->deFrom->dateTime();
+    ui->tableWidget->filter.dateFilter.second = ui->deTo->dateTime();
+    ui->tableWidget->filter.filterType = DataFilter::filtered_by_date;
+//    ui->tableWidget->filter.table = Operation::outcome;
+    ReadDataTask *task = new ReadDataTask(this);
+    task->filter = ui->tableWidget->filter;
+    int uid = task_queue->addNewTask(task);
+    if (uid < 0){
+        qDebug()<<__FUNCTION__<<uid;
+        return;
+    }
+    emit goWaitTask(uid, "Loading...");
 }
 
 void SummaryWidget::on_TableWidget_updateData()
@@ -59,6 +59,10 @@ void SummaryWidget::on_TableWidget_updateData()
 
 void SummaryWidget::operation_finished(Task* ftask)
 {
+    if (ftask->status() == Task::status_failure){
+        return;
+    }
+
     if (ftask->taskType() == Task::task_read){
         ReadDataTask* task = static_cast<ReadDataTask*>(ftask);
         DataContainer dc(this);

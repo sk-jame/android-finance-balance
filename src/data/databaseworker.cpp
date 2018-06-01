@@ -95,9 +95,9 @@ void DataBaseWorker::process()
                     res = (readTask(r_task) == 0);
                 }
                 else if (task->taskType() == Task::task_exec) {
-                    ExecQueryTask* eq_tasl = static_cast<ExecQueryTask*>(task);
-                    res = execQuery(eq_tasl->request());
-                    eq_tasl->setQuery(this->query);
+                    ExecQueryTask* eq_task = static_cast<ExecQueryTask*>(task);
+                    res = (execQuery(eq_task->request()) == 0);
+                    eq_task->setQuery(this->query);
                 }
 
                 task->setStatus((res)?(Task::status_success) : (Task::status_failure));
@@ -240,10 +240,12 @@ int DataBaseWorker::readTask(ReadDataTask* task)
             req += " WHERE ";
             foreach (QString str, additionalWhereList) {
                 req += " " + str;
+                if (str != additionalWhereList.last())
+                    req += " AND";
             }
-            qDebug() << req;
         }
-        if (!execQuery(request.first))
+        qDebug() << req;
+        if (!execQuery(req))
             return -1;
 
         while(query.next()){

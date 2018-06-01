@@ -1,3 +1,4 @@
+#include "common/logger.h"
 #include "ui/mainwindow.h"
 #include <QApplication>
 #include <QTextStream>
@@ -20,6 +21,7 @@ int main(int argc, char *argv[])
 
     file.close();
 #endif
+    Logger::setCallbackEvents(false);
 
     TaskQueue task_queue;
     DataBaseWorker database_worker(&task_queue);
