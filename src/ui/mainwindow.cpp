@@ -113,7 +113,7 @@ void MainWindow::onFinishedTask(Task* ftask)
     if (wait_task_uid == ftask->uid()){
         wait_dialog.close();
         if (ftask->status() == Task::status_failure){
-//            qDebug()<<"Task failed. UID:" << task->uid();
+            qDebug()<<"Task failed. UID:" << ftask->uid();
             return;
         }
 

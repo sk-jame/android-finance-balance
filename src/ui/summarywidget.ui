@@ -29,11 +29,37 @@
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QDateEdit" name="deFrom">
-      <property name="calendarPopup">
+    <item row="2" column="0">
+     <widget class="QRadioButton" name="rbTableSelect_outcome">
+      <property name="text">
+       <string>Исходящие</string>
+      </property>
+      <attribute name="buttonGroup">
+       <string notr="true">buttonGroup_2</string>
+      </attribute>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QRadioButton" name="rbTableSelect_Income">
+      <property name="text">
+       <string>Входящие</string>
+      </property>
+      <property name="checked">
        <bool>true</bool>
       </property>
+      <attribute name="buttonGroup">
+       <string notr="true">buttonGroup_2</string>
+      </attribute>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QRadioButton" name="rbShowBalanceDaily">
+      <property name="text">
+       <string>Баланс по дням</string>
+      </property>
+      <attribute name="buttonGroup">
+       <string notr="true">buttonGroup</string>
+      </attribute>
      </widget>
     </item>
     <item row="0" column="1">
@@ -43,10 +69,40 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="0" colspan="2">
+    <item row="8" column="0" colspan="2">
      <widget class="DatabaseTableWidget" name="tableWidget"/>
     </item>
-    <item row="1" column="0" colspan="2">
+    <item row="4" column="1">
+     <widget class="QRadioButton" name="rbShowMonthlySum">
+      <property name="text">
+       <string>Сумма по месяцам</string>
+      </property>
+      <attribute name="buttonGroup">
+       <string notr="true">buttonGroup</string>
+      </attribute>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QRadioButton" name="rbShowOperations">
+      <property name="text">
+       <string>Операции</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+      <attribute name="buttonGroup">
+       <string notr="true">buttonGroup</string>
+      </attribute>
+     </widget>
+    </item>
+    <item row="9" column="1">
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>Показать</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0" colspan="2">
      <widget class="Line" name="line">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -54,17 +110,57 @@
      </widget>
     </item>
     <item row="3" column="1">
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QRadioButton" name="rbShowDailySum">
       <property name="text">
-       <string>Показать</string>
+       <string>Сумма по дням</string>
+      </property>
+      <attribute name="buttonGroup">
+       <string notr="true">buttonGroup</string>
+      </attribute>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QDateEdit" name="deFrom">
+      <property name="calendarPopup">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
-    <item row="3" column="0">
+    <item row="9" column="0">
      <widget class="QPushButton" name="pushButton_2">
       <property name="text">
        <string>Назад</string>
       </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QRadioButton" name="rbShowReasonSum">
+      <property name="text">
+       <string>Сумма по причинам</string>
+      </property>
+      <attribute name="buttonGroup">
+       <string notr="true">buttonGroup</string>
+      </attribute>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QRadioButton" name="rbTableSelect_All">
+      <property name="text">
+       <string>Все</string>
+      </property>
+      <attribute name="buttonGroup">
+       <string notr="true">buttonGroup_2</string>
+      </attribute>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QRadioButton" name="rbShowBalanceMonthly">
+      <property name="text">
+       <string>Баланс по месяцам</string>
+      </property>
+      <attribute name="buttonGroup">
+       <string notr="true">buttonGroup</string>
+      </attribute>
      </widget>
     </item>
    </layout>
@@ -74,6 +170,15 @@
    <zorder>tableWidget</zorder>
    <zorder>pushButton</zorder>
    <zorder>pushButton_2</zorder>
+   <zorder>rbTableSelect_Income</zorder>
+   <zorder>rbTableSelect_outcome</zorder>
+   <zorder>rbTableSelect_All</zorder>
+   <zorder>rbShowOperations</zorder>
+   <zorder>rbShowReasonSum</zorder>
+   <zorder>rbShowDailySum</zorder>
+   <zorder>rbShowMonthlySum</zorder>
+   <zorder>rbShowBalanceDaily</zorder>
+   <zorder>rbShowBalanceMonthly</zorder>
   </widget>
  </widget>
  <customwidgets>
@@ -86,7 +191,23 @@
  <tabstops>
   <tabstop>deFrom</tabstop>
   <tabstop>deTo</tabstop>
+  <tabstop>rbTableSelect_Income</tabstop>
+  <tabstop>rbTableSelect_outcome</tabstop>
+  <tabstop>rbTableSelect_All</tabstop>
+  <tabstop>rbShowOperations</tabstop>
+  <tabstop>rbShowReasonSum</tabstop>
+  <tabstop>rbShowDailySum</tabstop>
+  <tabstop>rbShowMonthlySum</tabstop>
+  <tabstop>rbShowBalanceDaily</tabstop>
+  <tabstop>rbShowBalanceMonthly</tabstop>
+  <tabstop>tableWidget</tabstop>
+  <tabstop>pushButton</tabstop>
+  <tabstop>pushButton_2</tabstop>
  </tabstops>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="buttonGroup_2"/>
+  <buttongroup name="buttonGroup"/>
+ </buttongroups>
 </ui>

@@ -157,7 +157,7 @@ void DataContainer::getMonthlySummary(QList<QVector<QVariant> *> &table, QList<O
         }
         if (!res || op == ops.last()){
             QVector<QVariant> tmp;
-            tmp << tmp_date.toString("yyyy-MM") << "Income" << tmp_amount;
+            tmp << tmp_date.toString("yyyy-MM") << op->direction_name() << tmp_amount;
             table.push_back(new QVector<QVariant>(tmp));
             tmp_date = op->date_time.date();
             tmp_amount = op->amount;

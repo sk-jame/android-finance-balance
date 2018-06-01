@@ -79,6 +79,11 @@ void DatabaseTableWidget::contextMenuShow(QMouseEvent *event)
         return;
     }
     else if (res == actFind){
+        QTableWidgetItem* tmp_item = itemAt(event->pos());
+        if (tmp_item){
+            lastSearchString = tmp_item->text();
+            find(lastSearchString);
+        }
         showFindPopup();
         return;
     }

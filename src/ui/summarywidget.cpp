@@ -17,6 +17,8 @@ SummaryWidget::SummaryWidget(QWidget *parent) :
     ui->deTo->setTime(QTime(0,0));
     ui->tableWidget->show();
     connect(ui->tableWidget, &DatabaseTableWidget::updateDataRequest, this, &SummaryWidget::on_TableWidget_updateData);
+
+
 }
 
 SummaryWidget::~SummaryWidget()
@@ -26,6 +28,39 @@ SummaryWidget::~SummaryWidget()
 
 void SummaryWidget::on_pushButton_clicked()
 {
+    if (ui->rbTableSelect_All->isChecked()){
+        ui->tableWidget->filter.filterType |= DataFilter::filter_all_tables;
+    }
+    else if (ui->rbTableSelect_Income->isChecked()){
+        ui->tableWidget->filter.filterType &= ~DataFilter::filter_all_tables;
+        ui->tableWidget->filter.table = Operation::income;
+    }
+    else if (ui->rbTableSelect_outcome->isChecked()){
+        ui->tableWidget->filter.filterType &= ~DataFilter::filter_all_tables;
+        ui->tableWidget->filter.table = Operation::outcome;
+    }
+
+    if (ui->rbShowOperations->isChecked()){
+        ui->tableWidget->tableType_request = DataContainer::filtering_only;
+    }
+    else if (ui->rbShowBalanceDaily->isChecked()){
+        ui->tableWidget->tableType_request = DataContainer::balance_by_dates;
+    }
+    else if (ui->rbShowBalanceMonthly->isChecked()){
+        ui->tableWidget->tableType_request = DataContainer::balance_by_monthes;
+    }
+    else if (ui->rbShowDailySum->isChecked()){
+        ui->tableWidget->tableType_request = DataContainer::summary_by_dates;
+    }
+    else if (ui->rbShowMonthlySum->isChecked()){
+        ui->tableWidget->tableType_request = DataContainer::summary_by_monthes;
+    }
+    else if (ui->rbShowReasonSum->isChecked()){
+        ui->tableWidget->tableType_request = DataContainer::summary_by_reason;
+        ui->tableWidget->filter.filterType &= ~DataFilter::filter_all_tables;
+        ui->tableWidget->filter.table = Operation::income;
+    }
+
     callTableUpdate();
 }
 
