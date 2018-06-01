@@ -11,6 +11,7 @@ SummaryWidget::SummaryWidget(QWidget *parent) :
 {
     this->setGeometry(this->geometry().x(), this->geometry().y(), 720, 1280);
     ui->setupUi(this);
+    on_cbShowFilteres_toggled(false);
     this->setLayout(ui->gridLayout);
     ui->deFrom->setDate(QDate::currentDate().addMonths(-1));
     ui->deFrom->setTime(QTime(0,0));
@@ -18,6 +19,8 @@ SummaryWidget::SummaryWidget(QWidget *parent) :
     ui->deTo->setTime(QTime(0,0));
     ui->tableWidget->show();
     connect(ui->tableWidget, &DatabaseTableWidget::updateDataRequest, this, &SummaryWidget::on_TableWidget_updateData);
+    adjustSize();
+
 }
 
 SummaryWidget::~SummaryWidget()
@@ -108,4 +111,50 @@ void SummaryWidget::operation_finished(Task* ftask)
 void SummaryWidget::on_pushButton_2_clicked()
 {
     emit goBack();
+}
+
+void SummaryWidget::on_cbShowFilteres_toggled(bool checked)
+{
+//    ui->deFrom->setEnabled(checked);
+//    ui->deTo->setEnabled(checked);
+//    ui->rbShowBalanceDaily->setEnabled(checked);
+//    ui->rbShowBalanceMonthly->setEnabled(checked);
+//    ui->rbShowDailySum->setEnabled(checked);
+//    ui->rbShowMonthlySum->setEnabled(checked);
+//    ui->rbShowOperations->setEnabled(checked);
+//    ui->rbShowReasonSum->setEnabled(checked);
+//    ui->rbTableSelect_All->setEnabled(checked);
+//    ui->rbTableSelect_Income->setEnabled(checked);
+//    ui->rbTableSelect_outcome->setEnabled(checked);
+//    return;
+
+    if (checked){
+        ui->deFrom->show();
+        ui->deTo->show();
+        ui->rbShowBalanceDaily->show();
+        ui->rbShowBalanceMonthly->show();
+        ui->rbShowDailySum->show();
+        ui->rbShowMonthlySum->show();
+        ui->rbShowOperations->show();
+        ui->rbShowReasonSum->show();
+        ui->rbTableSelect_All->show();
+        ui->rbTableSelect_Income->show();
+        ui->rbTableSelect_outcome->show();
+    }
+    else{
+        ui->deFrom->hide();
+        ui->deTo->hide();
+        ui->rbShowBalanceDaily->hide();
+        ui->rbShowBalanceMonthly->hide();
+        ui->rbShowDailySum->hide();
+        ui->rbShowMonthlySum->hide();
+        ui->rbShowOperations->hide();
+        ui->rbShowReasonSum->hide();
+        ui->rbTableSelect_All->hide();
+        ui->rbTableSelect_Income->hide();
+        ui->rbTableSelect_outcome->hide();
+    }
+    adjustSize();
+    ui->gridLayout->update();
+    update();
 }

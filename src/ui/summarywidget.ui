@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -45,6 +45,13 @@
      <number>5</number>
     </property>
     <item row="7" column="0" colspan="2">
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="0" colspan="2">
      <widget class="DatabaseTableWidget" name="tableWidget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -54,28 +61,21 @@
       </property>
      </widget>
     </item>
-    <item row="6" column="0" colspan="2">
-     <widget class="Line" name="line">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="1">
+    <item row="9" column="1">
      <widget class="QPushButton" name="pushButton">
       <property name="text">
        <string>Показать</string>
       </property>
      </widget>
     </item>
-    <item row="8" column="0">
+    <item row="9" column="0">
      <widget class="QPushButton" name="pushButton_2">
       <property name="text">
        <string>Назад</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="0">
+    <item row="1" column="0">
      <widget class="QDateEdit" name="deFrom">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
@@ -88,7 +88,7 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="1">
+    <item row="1" column="1">
      <widget class="QDateEdit" name="deTo">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
@@ -101,7 +101,7 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="0">
+    <item row="2" column="0">
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="spacing">
        <number>1</number>
@@ -157,7 +157,7 @@
       </item>
      </layout>
     </item>
-    <item row="1" column="1">
+    <item row="2" column="1">
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <property name="spacing">
        <number>1</number>
@@ -243,6 +243,13 @@
       </item>
      </layout>
     </item>
+    <item row="0" column="0" colspan="2">
+     <widget class="QCheckBox" name="cbShowFilteres">
+      <property name="text">
+       <string>Показать фильтры</string>
+      </property>
+     </widget>
+    </item>
    </layout>
    <zorder>deTo</zorder>
    <zorder>deFrom</zorder>
@@ -250,6 +257,7 @@
    <zorder>tableWidget</zorder>
    <zorder>pushButton</zorder>
    <zorder>pushButton_2</zorder>
+   <zorder>cbShowFilteres</zorder>
   </widget>
  </widget>
  <customwidgets>
