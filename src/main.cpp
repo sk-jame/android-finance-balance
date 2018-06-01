@@ -24,19 +24,23 @@ int main(int argc, char *argv[])
     Logger::setCallbackEvents(false);
 
     TaskQueue task_queue;
+    WidgetForStack::setTaskQueue(&task_queue);
+
     DataBaseWorker database_worker(&task_queue);
     if (database_worker.isGood() == false){
         qDebug()<<"Something realy bad happens with database(QSql) or mb with db file (QFile)";
         return -1;
     }
+
     MainWindow w;
-    WidgetForStack::setTaskQueue(&task_queue);
     QObject::connect(&w, &MainWindow::finished, &database_worker, &DataBaseWorker::setDone);
     QObject::connect(&w, &MainWindow::error, &database_worker, &DataBaseWorker::error, Qt::QueuedConnection);
     QObject::connect(&task_queue, &TaskQueue::finished_task, &w, &MainWindow::onFinishedTask, Qt::QueuedConnection);
-
+    QObject::connect(&database_worker, &DataBaseWorker::task_failed, &w, &MainWindow::onFinishedTask, Qt::QueuedConnection);
     w.show();
     database_worker.start();
+    w.init_labels();
+
     int ret_code = a.exec();
 
     database_worker.setDone(true);

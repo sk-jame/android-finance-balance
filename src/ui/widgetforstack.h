@@ -15,6 +15,8 @@ protected:
 public:
     explicit WidgetForStack(QWidget *parent = nullptr);
     static void setTaskQueue(TaskQueue* dbw);
+    static TaskQueue *getTask_queue();
+
 signals:
     void goNext();
     void goHome();

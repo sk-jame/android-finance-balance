@@ -4,7 +4,7 @@
 #include "incomewidget.h"
 #include "amountwidget.h"
 #include "outcomewidget.h"
-
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -38,6 +38,18 @@ MainWindow::~MainWindow()
     emit finished();
 }
 
+void MainWindow::init_labels()
+{
+    ReadDataTask *task = new ReadDataTask(nullptr);
+    task->filter.filterType = DataFilter::filter_all_tables;
+    int uid = WidgetForStack::getTask_queue()->addNewTask(task);
+    if (uid < 0){
+        qDebug() << __FUNCTION__ << uid;
+        return;
+    }
+    wait_task_uid = uid;
+}
+
 void MainWindow::onGoBack()
 {
     if (ui->stackedWidget->currentIndex() == outcomeWidgetIndex){
@@ -66,6 +78,7 @@ void MainWindow::onGoNext()
 
 void MainWindow::restoreMain()
 {
+    init_labels();
     ui->stackedWidget->setCurrentIndex(eWidget_main);
 }
 
@@ -86,23 +99,43 @@ void MainWindow::on_pbSummary_4_clicked()
 
 void MainWindow::onWaitTask(int uid, QString str_wait_for, QString str_success, QString str_error)
 {
-
     wait_dialog.setWindowTitle(str_wait_for + QString::asprintf(" .Task #%i", uid));
     wait_dialog.setMinimum(0);
     wait_dialog.setMaximum(1);
     wait_dialog.setModal(true);
 
     wait_task_uid = uid;
-    wait_dialog.showMaximized();
+//    wait_dialog.show();
 }
 
-void MainWindow::onFinishedTask(Task* task)
+void MainWindow::onFinishedTask(Task* ftask)
 {
-    if (wait_task_uid == task->uid()){
+    if (wait_task_uid == ftask->uid()){
         wait_dialog.close();
+        if (ftask->status() == Task::status_failure){
+//            qDebug()<<"Task failed. UID:" << task->uid();
+            return;
+        }
+
+        if (ftask->taskType() == Task::task_read){
+            ReadDataTask* task = static_cast<ReadDataTask*>(ftask);
+            DataContainer dc(this);
+            dc.setOperations(task->read_data());
+            ui->labelInData->setText(QString::number(dc.totalIncome()));
+            ui->labelOutData->setText(QString::number(dc.totalOutcome()));
+            ui->labelSavedData->setText(QString::number(dc.totalSaved()));
+            ui->labelBalanceData->setText(QString::number(dc.totalDifference()));
+        }
+
+        if (ftask->lastWidget() == nullptr){
+            WidgetForStack::getTask_queue()->removeTask(ftask);
+            delete ftask;
+            return;
+        }
+
         for(int i = 0; i < ui->stackedWidget->count(); i++){
-            if (ui->stackedWidget->widget(i) == task->lastWidget()){
-                task->lastWidget()->operation_finished(task);
+            if (ui->stackedWidget->widget(i) == ftask->lastWidget()){
+                ftask->lastWidget()->operation_finished(ftask);
                 ui->stackedWidget->setCurrentIndex(i);
                 break;
             }

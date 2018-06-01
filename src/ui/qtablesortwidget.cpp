@@ -126,25 +126,17 @@ void QTableSortWidget::find(QString searchStr){
     }
 }
 
+void QTableSortWidget::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton){
+        m_last_click_time = QTime::currentTime();
+    }
+}
+
 void QTableSortWidget::mouseReleaseEvent(QMouseEvent *event){
-    if (event->button() == Qt::RightButton){
-        QMenu menu(this);
-        menu.addAction("Копировать в буфер обмена");
-        QAction* actFind = menu.addAction("Найти...");
-        QRect rect = menu.geometry();
-        rect.moveTopLeft(event->screenPos().toPoint());
-        menu.setGeometry(rect);
-        QAction* res = menu.exec();
-        if (res == Q_NULLPTR){
-            QTableWidget::mouseReleaseEvent(event);
-            return;
-        }
-        if (res != actFind){
-            copyToClipBoard();
-        }
-        else{
-            showFindPopup();
-        }
+    if (event->button() == Qt::RightButton ||
+        m_last_click_time.addMSecs(750) < QTime::currentTime()){
+        contextMenuShow(event);
     }
     QTableWidget::mouseReleaseEvent(event);
 }
@@ -243,6 +235,27 @@ void QTableSortWidget::keyPressEvent(QKeyEvent *ke){
     }
     else if (ke->matches(QKeySequence::SelectAll)){
         this->selectAll();
+    }
+}
+
+void QTableSortWidget::contextMenuShow(QMouseEvent *event)
+{
+    QMenu menu(this);
+    menu.addAction("Копировать в буфер обмена");
+    QAction* actFind = menu.addAction("Найти...");
+    QRect rect = menu.geometry();
+    rect.moveTopLeft(event->screenPos().toPoint());
+    menu.setGeometry(rect);
+    QAction* res = menu.exec();
+    if (res == Q_NULLPTR){
+        QTableWidget::mouseReleaseEvent(event);
+        return;
+    }
+    if (res != actFind){
+        copyToClipBoard();
+    }
+    else{
+        showFindPopup();
     }
 }
 

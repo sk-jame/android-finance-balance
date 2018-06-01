@@ -1,5 +1,6 @@
 #include "databasetablewidget.h"
 #include <QDebug>
+#include <QMenu>
 
 DatabaseTableWidget::DatabaseTableWidget(QWidget *parent)
     : QTableSortWidget(parent),
@@ -13,7 +14,7 @@ DatabaseTableWidget::DatabaseTableWidget(QWidget *parent)
 void DatabaseTableWidget::updateData()
 {
     // TODO
-    emit updateDataRequest(tableType_request);
+    emit updateDataRequest();
 }
 
 void DatabaseTableWidget::operationFinished(QList<QVector<QVariant>* > data)
@@ -42,4 +43,80 @@ void DatabaseTableWidget::operationFinished(QList<QVector<QVariant>* > data)
 //    this->hide();
 //    this->show();
     this->setSortingEnabled(true);
+    tableType_current = tableType_request;
+}
+
+
+void DatabaseTableWidget::contextMenuShow(QMouseEvent *event)
+{
+    QMenu menu(this);
+    QAction* actCpy = menu.addAction("Копировать в буфер обмена");
+    QAction* actFind = menu.addAction("Найти...");
+    QMenu* menu_content = menu.addMenu("Отображать...");
+    QMenu* menu_tableSelect = menu_content->addMenu("Таблицу");
+    QAction* actShowIncome = menu_tableSelect->addAction("Входящие");
+    QAction* actShowOutcome = menu_tableSelect->addAction("Исходящие");
+    QAction* actShowAll = menu_tableSelect->addAction("Всё");
+
+    QAction* actShowOperations = menu_content->addAction("Операции");
+    QAction* actShowSummaryReason = menu_content->addAction("Сумма по причинам");
+    QAction* actShowDailySummary = menu_content->addAction("Итог по дням");
+    QAction* actShowMonthSummary = menu_content->addAction("Итог по месяцам");
+    QAction* actShowDailyBalance = menu_content->addAction("Баланс по дням");
+    QAction* actShowMonthBalance = menu_content->addAction("Баланс по месяцам");
+
+
+    QRect rect = menu.geometry();
+    rect.moveTopLeft(event->screenPos().toPoint());
+    menu.setGeometry(rect);
+    QAction* res = menu.exec();
+    if (res == Q_NULLPTR){
+        QTableWidget::mouseReleaseEvent(event);
+        return;
+    }
+    if (res == actCpy){
+        copyToClipBoard();
+        return;
+    }
+    else if (res == actFind){
+        showFindPopup();
+        return;
+    }
+    else if (res == actShowAll){
+        filter.filterType |= DataFilter::filter_all_tables;
+    }
+    else if (res == actShowDailyBalance){
+        tableType_request = DataContainer::balance_by_dates;
+        filter.filterType |= DataFilter::filter_all_tables;
+    }
+    else if (res == actShowMonthBalance){
+        tableType_request = DataContainer::balance_by_monthes;
+        filter.filterType |= DataFilter::filter_all_tables;
+    }
+    else if (res == actShowSummaryReason){
+        tableType_request = DataContainer::summary_by_reason;
+    }
+    else if (res == actShowDailySummary){
+        tableType_request = DataContainer::summary_by_dates;
+        filter.filterType |= DataFilter::filter_all_tables;
+    }
+    else if (res == actShowMonthSummary){
+        tableType_request = DataContainer::summary_by_monthes;
+        filter.filterType |= DataFilter::filter_all_tables;
+    }
+    else if (res == actShowIncome){
+        filter.table = Operation::income;
+        filter.filterType &= ~DataFilter::filter_all_tables;
+    }
+    else if (res == actShowOutcome){
+        filter.table = Operation::outcome;
+        filter.filterType &= ~DataFilter::filter_all_tables;
+    }
+    else if (res == actShowOperations){
+        tableType_request = DataContainer::filtering_only;
+    }
+    else {
+        return;
+    }
+    updateData();
 }

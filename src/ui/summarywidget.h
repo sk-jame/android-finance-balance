@@ -16,13 +16,15 @@ public:
     ~SummaryWidget();
 
 private slots:
-    void on_rbPeriod_toggled(bool checked);
     void on_pushButton_clicked();
     void on_TableWidget_updateData();
+    void on_pushButton_2_clicked();
+
 private:
     Ui::SummaryWidget *ui;
 
     // WidgetForStack interface
+    void callTableUpdate();
 public slots:
     void operation_finished(Task *ftask);
 };

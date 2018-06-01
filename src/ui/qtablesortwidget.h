@@ -2,6 +2,8 @@
 #define QTABLESORTWIDGET_H
 
 #include <QTableWidget>
+#include <QTime>
+
 
 class QTableSortWidget : public QTableWidget
 {
@@ -35,6 +37,8 @@ protected:
 
     bool searchDialogCreated;
     QString lastSearchString;
+
+    QTime m_last_click_time;
 public slots:
 	virtual void setSortType(int col, QTableSortWidget::ESortType type);
 	virtual void convertColumnValue(int col, ConvertFunction func);
@@ -43,8 +47,11 @@ protected slots:
     virtual void find(QString searchStr);
 	// QWidget interface
 protected:
+    virtual void mousePressEvent(QMouseEvent *event);
     virtual void mouseReleaseEvent(QMouseEvent *event);
     virtual void keyPressEvent(QKeyEvent *ke);
+
+    virtual void contextMenuShow(QMouseEvent *event);
 
     void copyToClipBoard();
     void showFindPopup();

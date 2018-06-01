@@ -16,6 +16,7 @@ SummaryWidget::SummaryWidget(QWidget *parent) :
     ui->deTo->setDate(QDate::currentDate());
     ui->deTo->setTime(QTime(0,0));
     ui->tableWidget->show();
+    connect(ui->tableWidget, &DatabaseTableWidget::updateDataRequest, this, &SummaryWidget::on_TableWidget_updateData);
 }
 
 SummaryWidget::~SummaryWidget()
@@ -23,32 +24,25 @@ SummaryWidget::~SummaryWidget()
     delete ui;
 }
 
-void SummaryWidget::on_rbPeriod_toggled(bool checked)
-{
-    ui->deFrom->setEnabled(checked);
-    ui->deTo->setEnabled(checked);
-}
-
 void SummaryWidget::on_pushButton_clicked()
 {
-    ui->tableWidget->filter.dateFilter.first = ui->deFrom->dateTime();
-    ui->tableWidget->filter.dateFilter.second = ui->deTo->dateTime();
-    ui->tableWidget->filter.filterType = DataFilter::filtered_by_date;
-//    ui->tableWidget->filter.table = Operation::outcome;
-    ReadDataTask *task = new ReadDataTask(this);
-    task->filter = ui->tableWidget->filter;
-    int uid = task_queue->addNewTask(task);
-    if (uid < 0){
-        qDebug()<<__FUNCTION__<<uid;
-        return;
-    }
-    emit goWaitTask(uid, "Loading...");
+    callTableUpdate();
 }
 
 void SummaryWidget::on_TableWidget_updateData()
 {
+    callTableUpdate();
+}
+
+void SummaryWidget::callTableUpdate()
+{
+    ui->tableWidget->filter.dateFilter.first = ui->deFrom->dateTime();
+    ui->tableWidget->filter.dateFilter.second = ui->deTo->dateTime();
+    ui->tableWidget->filter.filterType |= DataFilter::filtered_by_date;
+
     ReadDataTask *task = new ReadDataTask(this);
     task->filter = ui->tableWidget->filter;
+
     int uid = task_queue->addNewTask(task);
     if (uid < 0){
         qDebug() << __FUNCTION__ << uid;
@@ -67,9 +61,6 @@ void SummaryWidget::operation_finished(Task* ftask)
         ReadDataTask* task = static_cast<ReadDataTask*>(ftask);
         DataContainer dc(this);
         dc.setOperations(task->read_data());
-        ui->labelInData->setText(QString::number(dc.totalIncome()));
-        ui->labelOutData->setText(QString::number(dc.totalOutcome()));
-        ui->labelSavedData->setText(QString::number(dc.totalSaved()));
         ui->tableWidget->operationFinished(dc.getTable(ui->tableWidget->tableType_request));
         task_queue->removeTask(task);
         delete task;
@@ -77,4 +68,9 @@ void SummaryWidget::operation_finished(Task* ftask)
     else if (ftask->taskType() == Task::task_exec){
 
     }
+}
+
+void SummaryWidget::on_pushButton_2_clicked()
+{
+    emit goBack();
 }

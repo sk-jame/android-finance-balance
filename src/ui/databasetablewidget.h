@@ -26,7 +26,14 @@ public slots:
      */
     void operationFinished(QList<QVector<QVariant> *> data);
 signals:
-    void updateDataRequest(DataContainer::TableTypes type);
+    void updateDataRequest();
+
+protected:
+
+
+    // QTableSortWidget interface
+protected:
+    virtual void contextMenuShow(QMouseEvent *event);
 };
 
 #endif // DATABASETABLEWIDGET_H

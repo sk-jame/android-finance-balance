@@ -17,7 +17,8 @@ public:
         filtered_by_reason = 0x01,
         filtered_by_date   = 0x02,
         filter_all_tables  = 0x128,
-    }filterType;
+    };
+    int filterType;
 
     inline bool checkType(FilterTypes type){
         return (filterType & type) == type;
@@ -28,6 +29,15 @@ class DataContainer : public QObject
 {
     Q_OBJECT
     QList<Operation*> m_operations;
+    QList<Operation*> m_operations_income;
+    QList<Operation*> m_operations_outcome;
+
+    void split_operations();
+    void getDailySummary(QList<QVector<QVariant>* >& table, QList<Operation*> ops);
+    void getMonthlySummary(QList<QVector<QVariant> *> &table, QList<Operation *> ops);
+    void getSummaryByReason(QList<QVector<QVariant> *> &table, QList<Operation *> ops);
+    void getDailyBalance(QList<QVector<QVariant> *> &table, QList<Operation *> ops);
+    void getMonthlyBalance(QList<QVector<QVariant> *> &table, QList<Operation *> ops);
 public:
     enum TableTypes {
         filtering_only      = 0x00,
@@ -50,7 +60,7 @@ public:
     qreal totalSaved();
     qreal totalDifference();
 
-    QList<QVector<QVariant> *> getTable(TableTypes type) const;
+    QList<QVector<QVariant> *> getTable(TableTypes type);
 signals:
 
 public slots:

@@ -25,6 +25,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 public slots:
+    void init_labels();
     void onFinishedTask(Task *task);
 private slots:
     void onGoBack();

@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>530</width>
+    <width>720</width>
     <height>401</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -23,20 +29,10 @@
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="5" column="0" colspan="2">
-     <widget class="DatabaseTableWidget" name="tableWidget"/>
-    </item>
-    <item row="6" column="0" colspan="2">
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>Показать</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="1">
-     <widget class="QLabel" name="labelSavedData">
-      <property name="text">
-       <string>0</string>
+    <item row="0" column="0">
+     <widget class="QDateEdit" name="deFrom">
+      <property name="calendarPopup">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -47,19 +43,8 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="0">
-     <widget class="QLabel" name="labelIn">
-      <property name="text">
-       <string>Приходы</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QDateEdit" name="deFrom">
-      <property name="calendarPopup">
-       <bool>true</bool>
-      </property>
-     </widget>
+    <item row="2" column="0" colspan="2">
+     <widget class="DatabaseTableWidget" name="tableWidget"/>
     </item>
     <item row="1" column="0" colspan="2">
      <widget class="Line" name="line">
@@ -69,45 +54,26 @@
      </widget>
     </item>
     <item row="3" column="1">
-     <widget class="QLabel" name="labelInData">
+     <widget class="QPushButton" name="pushButton">
       <property name="text">
-       <string>0</string>
+       <string>Показать</string>
       </property>
      </widget>
     </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="labelSaved">
+    <item row="3" column="0">
+     <widget class="QPushButton" name="pushButton_2">
       <property name="text">
-       <string>Отложено</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="labelOut">
-      <property name="text">
-       <string>Расходов</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QLabel" name="labelOutData">
-      <property name="text">
-       <string>0</string>
+       <string>Назад</string>
       </property>
      </widget>
     </item>
    </layout>
-   <zorder>pushButton</zorder>
-   <zorder>labelSavedData</zorder>
    <zorder>deTo</zorder>
-   <zorder>labelIn</zorder>
    <zorder>deFrom</zorder>
    <zorder>line</zorder>
-   <zorder>labelInData</zorder>
-   <zorder>labelSaved</zorder>
-   <zorder>labelOut</zorder>
-   <zorder>labelOutData</zorder>
    <zorder>tableWidget</zorder>
+   <zorder>pushButton</zorder>
+   <zorder>pushButton_2</zorder>
   </widget>
  </widget>
  <customwidgets>

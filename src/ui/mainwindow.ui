@@ -32,7 +32,7 @@
        <rect>
         <x>0</x>
         <y>10</y>
-        <width>151</width>
+        <width>156</width>
         <height>261</height>
        </rect>
       </property>
@@ -52,6 +52,80 @@
         </widget>
        </item>
        <item>
+        <layout class="QFormLayout" name="formLayout">
+         <item row="0" column="0">
+          <widget class="QLabel" name="labelOut">
+           <property name="text">
+            <string>Расходов</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="labelOutData">
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="labelIn">
+           <property name="text">
+            <string>Приходы</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="labelInData">
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="labelSaved">
+           <property name="text">
+            <string>Отложено</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLabel" name="labelSavedData">
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="labelDebs">
+           <property name="text">
+            <string>Долги</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLabel" name="labelDebsData">
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="labelBalance">
+           <property name="text">
+            <string>Баланс</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QLabel" name="labelBalanceData">
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <spacer name="verticalSpacer_4">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -67,7 +141,7 @@
        <item>
         <widget class="QPushButton" name="pbSummary_4">
          <property name="text">
-          <string>Итог</string>
+          <string>Подробнее</string>
          </property>
         </widget>
        </item>

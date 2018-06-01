@@ -93,6 +93,10 @@ public:
     int reasonIndex() const {
         return getReasonsNames().indexOf(reason);
     }
+
+    const QString direction_name() {
+        return (dir == income)? ("Income") : ("Outcome");
+    }
 };
 
 #endif // OPERATIONS_H
