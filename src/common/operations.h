@@ -6,9 +6,10 @@
 
 
 class Operation {
-private:
-    int         m_type_index;
 public:
+
+    typedef int Reasons;
+
     enum Type{
         type_invalid = -1,
         type_income = 0,
@@ -16,9 +17,75 @@ public:
         type_last
     };
 
-    enum Reasons{
+    enum {
         reason_doesnt_matter = -2,       /* https://www.youtube.com/watch?v=tAGnKpE4NCI */
-        reason_invalid = -1,
+        reason_invalid = -1
+    };
+
+
+    QString     comment;
+    Reasons     reason;
+    qreal       amount;
+    QDateTime   date_time;
+
+    Operation() :
+        comment(""),
+        reason(reason_invalid),
+        amount(0),
+        date_time(QDateTime::currentDateTime())
+    {}
+
+    Operation(Operation& another) :
+        comment(another.comment),
+        reason(another.reason),
+        amount(another.amount),
+        date_time(another.date_time)
+    {}
+
+    Operation(const Operation& another) :
+        comment(another.comment),
+        reason(another.reason),
+        amount(another.amount),
+        date_time(another.date_time)
+    {}
+
+    virtual ~Operation() {
+
+    }
+
+    virtual void fromJSON(const QJsonObject& json){
+        comment = (json["comment"].toString());
+        reason = (json["reason"].toInt());
+        amount = (json["amount"].toString().toFloat());
+        date_time = (QDateTime::fromString(json["date_time"].toString(), "yyyy.MM.dd HH:mm:ss"));
+    }
+
+    virtual QJsonObject toJSON(bool with_date = true){
+        QJsonObject obj;
+        obj["amount"] = amount;
+        obj["comment"] = comment;
+        obj["reason"] = reason;
+        if (with_date)
+            obj["date"] = QDate::currentDate().toString("dd.MM.yyyy");
+
+        return obj;
+    }
+
+    virtual const QString direction_name() { return ""; }
+    virtual Type type() const { return type_invalid; }
+    virtual const QStringList getReasonsNames() { return QStringList(); }
+    virtual QString reasonName() {
+        if (getReasonsNames().isEmpty())
+            return "";
+        return getReasonsNames().at(reason);
+    }
+    virtual bool isValid() {return true;}
+};
+
+class OutcomeOperation : public Operation
+{
+public:
+    enum {
         reason_food = 0,
         reason_entertainment,
         reason_charity,
@@ -30,79 +97,82 @@ public:
         reason_last                         /* carefull with Operation::getReasonsNames */
     };
 
-    Type  type;
-    QString     reason;
-    QString     comment;
-    qreal       amount;
-    QDateTime   date_time;
+    OutcomeOperation() :
+        Operation()
+    {
 
-    Operation() :
-        type(type_income),
-        reason(""),
-        comment(""),
-        amount(0),
-        date_time(QDateTime::currentDateTime())
-    {}
-
-    Operation(Operation& another) :
-        type(another.type),
-        reason(another.reason),
-        comment(another.comment),
-        amount(another.amount),
-        date_time(another.date_time)
-    {}
-
-    Operation(const Operation& another) :
-        type(another.type),
-        reason(another.reason),
-        comment(another.comment),
-        amount(another.amount),
-        date_time(another.date_time)
-    {}
-
-    QJsonObject toJSON(bool with_date = true){
-        QJsonObject obj;
-        obj["direction"] = (type==type_income)?"income":"outcome";
-        obj["type"] = reason;
-        obj["amount"] = amount;
-        obj["comment"] = comment;
-
-        if (with_date)
-            obj["date"] = QDate::currentDate().toString("dd.MM.yyyy");
-
-        return obj;
     }
 
-    Operation(const QJsonObject& json) :
-        type((json["type"].toString() == "income") ? (type_income) : (type_outcome)),
-        reason(json["reason"].toString()),
-        comment(json["comment"].toString()),
-        amount(json["amount"].toString().toFloat()),
-        date_time(QDateTime::fromString(json["date_time"].toString(), "dd.MM.yyyy HH:mm:ss"))
-    {}
+    ~OutcomeOperation(){
 
-    static const QStringList getReasonsNames() {
+    }
+
+    const QStringList getReasonsNames() {
+        QStringList tmpList = QStringList();
+        tmpList.push_back("Еда");
+        tmpList.push_back("Развлечения");
+        tmpList.push_back("Помощь");
+        tmpList.push_back("На будущее");
+        tmpList.push_back("Квартира");
+        tmpList.push_back("Кредиты / Долги");
+        tmpList.push_back("Транспорт");
+        tmpList.push_back("Техника");
+        return tmpList;
+    }
+    // Operation interface
+public:
+    const QString direction_name(){
+        return "Исходящие";
+    }
+
+    Type type() const {
+        return type_outcome;
+    }
+
+};
+
+class IncomeOperation : public Operation
+{
+public:
+    enum {
+        reason_salary = 0,
+        reason_credits,
+        reason_saved,
+        reason_last                         /* carefull with Operation::getReasonsNames */
+    };
+
+    IncomeOperation() :
+        Operation()
+    {
+
+    }
+
+    ~IncomeOperation(){
+
+    }
+
+    const QStringList getReasonsNames() {
         static QStringList tmpList = QStringList();
         if (tmpList.isEmpty()){
-            tmpList.push_back("Еда");
-            tmpList.push_back("Развлечения");
-            tmpList.push_back("Помощь");
-            tmpList.push_back("На будущее");
-            tmpList.push_back("Квартира");
-            tmpList.push_back("Кредиты / Долги");
-            tmpList.push_back("Транспорт");
-            tmpList.push_back("Техника");
+            tmpList.push_back("Зарплата/подарок");
+            tmpList.push_back("Кредит/Долг");
+            tmpList.push_back("Из сохранённых");
         }
         return tmpList;
     }
 
-    int reasonIndex() const {
-        return getReasonsNames().indexOf(reason);
+    // Operation interface
+public:
+    const QString direction_name(){
+        return "Входящие";
     }
 
-    const QString direction_name() {
-        return (type == type_income)? ("Income") : ("Outcome");
+    Type type() const {
+        return type_income;
     }
+
 };
 
 #endif // OPERATIONS_H
+
+

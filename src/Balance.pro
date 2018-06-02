@@ -41,7 +41,8 @@ SOURCES += \
     ui/base/reasonwidget.cpp \
     ui/base/filterwidget.cpp \
     ui/incomestackwidget.cpp \
-    ui/stackwidget.cpp
+    ui/stackwidget.cpp \
+    ui/incomepage.cpp
 
 HEADERS += \
     ui/mainwindow.h \
@@ -57,13 +58,15 @@ HEADERS += \
     ui/base/reasonwidget.h \
     ui/base/filterwidget.h \
     ui/incomestackwidget.h \
-    ui/stackwidget.h
+    ui/stackwidget.h \
+    ui/incomepage.h
 
 FORMS += \
     ui/mainwindow.ui \
     ui/base/amountwidget.ui \
     ui/base/reasonwidget.ui \
-    ui/base/filterwidget.ui
+    ui/base/filterwidget.ui \
+    ui/incomepage.ui
 
 CONFIG += mobility
 MOBILITY = 

@@ -193,10 +193,12 @@ const DataBaseWorker::DataBaseColumns& DataBaseWorker::db_columns()
 int DataBaseWorker::saveNewOperation(const Operation* op)
 {
     QString request = QString::asprintf("INSERT INTO %s (date,time,reason,amount, comment) VALUES ('%s','%s',%u,%.2f,'%s');",
-                                        (op->type == Operation::type_income) ? ("Income") : ("Outcome"),
+                                        (op->type() == Operation::type_income) ?
+                                            (income_table_name.toStdString().c_str()) :
+                                            (outcome_table_name.toStdString().c_str()),
                                         op->date_time.date().toString("yyyy-MM-dd").toStdString().c_str(),
                                         op->date_time.time().toString("HH:mm:ss").toStdString().c_str(),
-                                        (op->type == Operation::type_income) ? (0) : (op->reasonIndex()),
+                                        op->reason,
                                         op->amount, op->comment.toStdString().c_str());
 
     if (!execQuery(request))
@@ -259,15 +261,23 @@ int DataBaseWorker::readTask(ReadDataTask* task)
             return -1;
 
         while(query.next()){
-            Operation op;
-            op.date_time.setDate(QDate::fromString(query.value(db_columns().idx_date).toString(), "yyyy-MM-dd"));
-            op.date_time.setTime(QTime::fromString(query.value(db_columns().idx_time).toString(), "HH:mm:ss"));
-            op.type = request.second;
             if (query.value(db_columns().idx_reason).toInt() == Operation::reason_invalid)
                 continue;
-            op.reason = Operation::getReasonsNames().at(query.value(db_columns().idx_reason).toInt());
-            op.amount = query.value(db_columns().idx_amount).toFloat();
-            op.comment = query.value(db_columns().idx_comment).toString();
+
+            Operation* op;
+            if (request.second == Operation::type_income){
+                op = new IncomeOperation();
+            }
+            else if (request.second == Operation::type_outcome){
+                op = new OutcomeOperation();
+            }
+            else continue;
+
+            op->reason = query.value(db_columns().idx_reason).toInt();
+            op->date_time.setDate(QDate::fromString(query.value(db_columns().idx_date).toString(), "yyyy-MM-dd"));
+            op->date_time.setTime(QTime::fromString(query.value(db_columns().idx_time).toString(), "HH:mm:ss"));
+            op->amount = query.value(db_columns().idx_amount).toFloat();
+            op->comment = query.value(db_columns().idx_comment).toString();
             task->addOperation(op);
         }
     }

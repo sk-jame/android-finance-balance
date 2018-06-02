@@ -65,40 +65,40 @@ void FilterWidget::on_pushButton_clicked()
 
 void FilterWidget::callTableUpdate()
 {
-    ui->tableWidget->filter.dateFilter.first = ui->deFrom->dateTime();
-    ui->tableWidget->filter.dateFilter.second = ui->deTo->dateTime();
-    ui->tableWidget->filter.filterFlags |= DataFilter::filtered_by_date;
+//    ui->tableWidget->filter.dateFilter.first = ui->deFrom->dateTime();
+//    ui->tableWidget->filter.dateFilter.second = ui->deTo->dateTime();
+//    ui->tableWidget->filter.filterFlags |= DataFilter::filtered_by_date;
 
-    ReadDataTask *task = new ReadDataTask(this);
-    task->filter = ui->tableWidget->filter;
+//    ReadDataTask *task = new ReadDataTask(this);
+//    task->filter = ui->tableWidget->filter;
 
-    int uid = task_queue->addNewTask(task);
-    if (uid < 0){
-        qDebug() << __FUNCTION__ << uid;
-        return;
-    }
-    emit goWaitTask(uid, "Loading...");
+//    int uid = task_queue->addNewTask(task);
+//    if (uid < 0){
+//        qDebug() << __FUNCTION__ << uid;
+//        return;
+//    }
+//    emit goWaitTask(uid, "Loading...");
 }
 
-void FilterWidget::operation_finished(Task* ftask)
-{
-    if (ftask->status() == Task::status_failure){
-        return;
-    }
+//void FilterWidget::operation_finished(Task* ftask)
+//{
+//    if (ftask->status() == Task::status_failure){
+//        return;
+//    }
 
-    if (ftask->taskType() == Task::task_read){
-        ReadDataTask* task = static_cast<ReadDataTask*>(ftask);
-        DataContainer dc(this);
-        dc.setOperations(task->read_data());
-        ui->tableWidget->operationFinished(dc.getTable(ui->tableWidget->tableType_request));
-        task_queue->removeTask(task);
-        delete task;
-        qDebug()<<geometry();
-    }
-    else if (ftask->taskType() == Task::task_exec){
+//    if (ftask->taskType() == Task::task_read){
+//        ReadDataTask* task = static_cast<ReadDataTask*>(ftask);
+//        DataContainer dc(this);
+//        dc.setOperations(task->read_data());
+//        ui->tableWidget->operationFinished(dc.getTable(ui->tableWidget->tableType_request));
+//        task_queue->removeTask(task);
+//        delete task;
+//        qDebug()<<geometry();
+//    }
+//    else if (ftask->taskType() == Task::task_exec){
 
-    }
-}
+//    }
+//}
 
 void FilterWidget::on_pushButton_2_clicked()
 {

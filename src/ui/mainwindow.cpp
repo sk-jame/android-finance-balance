@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stackedWidget->widget(eWidget_main)->setLayout(ui->verticalLayout_4);
 
 //    outcomeWidgetIndex = ui->stackedWidget->addWidget(new OutcomeWidget(this));
-    amountWidgetIndex = ui->stackedWidget->addWidget(new AmountWidget(this));
+    amountWidgetIndex = ui->stackedWidget->addWidget(new AmountWidget("", this));
 //    incomeWidgetIndex = ui->stackedWidget->addWidget(new IncomeWidget(this));
     summaryWidgetIndex = ui->stackedWidget->addWidget(new FilterWidget(this));
 
@@ -26,8 +26,6 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(w, &WidgetForStack::goNext, this, &MainWindow::onGoNext);
         connect(w, &WidgetForStack::goBack, this, &MainWindow::onGoBack);
         connect(w, &WidgetForStack::goHome, this, &MainWindow::restoreMain);
-        connect(w, &WidgetForStack::goWaitTask, this, &MainWindow::onWaitTask);
-        connect(this, &MainWindow::error, w, &WidgetForStack::operation_error);
     }
     wait_dialog.close();
 }
@@ -43,12 +41,12 @@ void MainWindow::init_labels()
     ReadDataTask *task = new ReadDataTask(nullptr);
     task->filter.filterFlags = DataFilter::filter_show_all_tbl;
     task->filter.reasonFilter = Operation::reason_invalid;
-    int uid = WidgetForStack::getTask_queue()->addNewTask(task);
-    if (uid < 0){
-        qDebug() << __FUNCTION__ << uid;
-        return;
-    }
-    wait_task_uid = uid;
+//    int uid = WidgetForStack::getTask_queue()->addNewTask(task);
+//    if (uid < 0){
+//        qDebug() << __FUNCTION__ << uid;
+//        return;
+//    }
+//    wait_task_uid = uid;
 }
 
 void MainWindow::onGoBack()
@@ -127,17 +125,17 @@ void MainWindow::onFinishedTask(Task* ftask)
         }
 
         if (ftask->lastWidget() == nullptr){
-            WidgetForStack::getTask_queue()->removeTask(ftask);
-            delete ftask;
+//            WidgetForStack::getTask_queue()->removeTask(ftask);
+//            delete ftask;
             return;
         }
 
         for(int i = 0; i < ui->stackedWidget->count(); i++){
-            if (ui->stackedWidget->widget(i) == ftask->lastWidget()){
-                ftask->lastWidget()->operation_finished(ftask);
-                ui->stackedWidget->setCurrentIndex(i);
-                break;
-            }
+//            if (ui->stackedWidget->widget(i) == ftask->lastWidget()){
+//                ftask->lastWidget()->operation_finished(ftask);
+//                ui->stackedWidget->setCurrentIndex(i);
+//                break;
+//            }
         }
     }
 }

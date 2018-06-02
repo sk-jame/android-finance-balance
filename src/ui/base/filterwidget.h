@@ -22,10 +22,6 @@ private slots:
     void callTableUpdate();
 private:
     Ui::FilterWidget *ui;
-
-    // WidgetForStack interface
-public slots:
-    void operation_finished(Task *ftask);
 };
 
 #endif // SUMMARYWIDGET_H

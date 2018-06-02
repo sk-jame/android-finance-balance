@@ -14,7 +14,7 @@ qreal DataContainer::totalIncome()
 {
     qreal total = 0;
     foreach (Operation* op, m_operations) {
-        if (op->type == Operation::type_income){
+        if (op->type() == Operation::type_income){
             total += op->amount;
         }
     }
@@ -25,7 +25,7 @@ qreal DataContainer::totalOutcome()
 {
     qreal total = 0;
     foreach (Operation* op, m_operations) {
-        if (op->type == Operation::type_outcome){
+        if (op->type() == Operation::type_outcome){
             total += op->amount;
         }
     }
@@ -36,8 +36,8 @@ qreal DataContainer::totalSaved()
 {
     qreal total = 0;
     foreach (Operation* op, m_operations) {
-        if (op->type == Operation::type_outcome &&
-            op->reasonIndex() == Operation::reason_saveMoney){
+        if (op->type() == Operation::type_outcome &&
+            op->reason == OutcomeOperation::reason_saveMoney){
             total += op->amount;
         }
     }
@@ -48,10 +48,10 @@ qreal DataContainer::totalDifference()
 {
     qreal total = 0;
     foreach (Operation* op, m_operations) {
-        if (op->type == Operation::type_income){
+        if (op->type() == Operation::type_income){
             total += op->amount;
         }
-        if (op->type == Operation::type_outcome){
+        if (op->type() == Operation::type_outcome){
             total -= op->amount;
         }
     }
@@ -69,10 +69,7 @@ QList<QVector<QVariant>* > DataContainer::getTable(TableTypes type)
         table.push_back(new QVector<QVariant>(tmp));
         foreach (Operation* op, m_operations) {
             tmp.clear();
-            if (op->type == Operation::type_outcome)
-                tmp << op->date_time.date() << op->date_time.time() << op->reason << op->amount << op->comment;
-            else
-                tmp << op->date_time.date() << op->date_time.time() << "---" << op->amount << op->comment;
+            tmp << op->date_time.date() << op->date_time.time() << op->reasonName() << op->amount << op->comment;
             table.push_back(new QVector<QVariant>(tmp));
         }
         break;
@@ -113,7 +110,7 @@ void DataContainer::split_operations()
     m_operations_income.clear();
     m_operations_outcome.clear();
     foreach (Operation* op, m_operations) {
-        if (op->type == Operation::type_income)
+        if (op->type() == Operation::type_income)
             m_operations_income << op;
         else
             m_operations_outcome << op;
@@ -167,23 +164,23 @@ void DataContainer::getMonthlySummary(QList<QVector<QVariant> *> &table, QList<O
 
 void DataContainer::getSummaryByReason(QList<QVector<QVariant> *> &table, QList<Operation *> ops)
 {
-    if (ops.isEmpty())
-        return;
+//    if (ops.isEmpty())
+//        return;
 
-    QVector<qreal> amount_by_reason;
-    for(int i = 0; i < Operation::reason_last; i++){
-        amount_by_reason.push_back(0);
-    }
+//    QVector<qreal> amount_by_reason;
+//    for(int i = 0; i < Operation::reason_last; i++){
+//        amount_by_reason.push_back(0);
+//    }
 
-    for(int i = 0; i < ops.count(); i++){
-        amount_by_reason[ops.at(i)->reasonIndex()] += ops.at(i)->amount;
-    }
-
-    for(int i = 0; i < Operation::reason_last; i++){
-        QVector<QVariant> tmp;
-        tmp << Operation::getReasonsNames().at(i) << amount_by_reason[i];
-        table.push_back(new QVector<QVariant>(tmp));
-    }
+//    for(int i = 0; i < ops.count(); i++){
+//        amount_by_reason[ops.at(i)->reasonIndex()] += ops.at(i)->amount;
+//    }
+    // TODO fix it
+//    for(int i = 0; i < Operation::reason_last; i++){
+//        QVector<QVariant> tmp;
+//        tmp << Operation::getReasonsNames().at(i) << amount_by_reason[i];
+//        table.push_back(new QVector<QVariant>(tmp));
+//    }
 }
 
 void DataContainer::getDailyBalance(QList<QVector<QVariant> *> &table, QList<Operation *> ops)
@@ -195,9 +192,9 @@ void DataContainer::getDailyBalance(QList<QVector<QVariant> *> &table, QList<Ope
     qreal tmp_amount = 0;
     foreach (Operation* op, ops) {
         if (tmp_date == op->date_time.date()){
-            if (op->type == Operation::type_outcome)
+            if (op->type()== Operation::type_outcome)
                 tmp_amount -= op->amount;
-            else if (op->type == Operation::type_income)
+            else if (op->type()== Operation::type_income)
                 tmp_amount += op->amount;
         }
 
@@ -206,9 +203,9 @@ void DataContainer::getDailyBalance(QList<QVector<QVariant> *> &table, QList<Ope
             tmp << tmp_date.toString("yyyy-MM-dd") << tmp_amount;
             table.push_back(new QVector<QVariant>(tmp));
             tmp_date = op->date_time.date();
-            if (op->type == Operation::type_outcome)
+            if (op->type()== Operation::type_outcome)
                 tmp_amount = -op->amount;
-            else if (op->type == Operation::type_income)
+            else if (op->type()== Operation::type_income)
                 tmp_amount = op->amount;
         }
     }
@@ -226,9 +223,9 @@ void DataContainer::getMonthlyBalance(QList<QVector<QVariant> *> &table, QList<O
                 tmp_date.year() == op->date_time.date().year();
 
         if (res){
-            if (op->type == Operation::type_outcome)
+            if (op->type()== Operation::type_outcome)
                 tmp_amount -= op->amount;
-            else if (op->type == Operation::type_income)
+            else if (op->type()== Operation::type_income)
                 tmp_amount += op->amount;
         }
 

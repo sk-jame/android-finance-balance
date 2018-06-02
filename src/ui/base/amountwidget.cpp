@@ -4,11 +4,13 @@
 #include <QMessageBox>
 #include <QDebug>
 
-AmountWidget::AmountWidget(QWidget *parent) :
+AmountWidget::AmountWidget(QString _text, QWidget *parent) :
     WidgetForStack(parent),
     ui(new Ui::AmountWidget)
 {
     ui->setupUi(this);
+    connect(this, &AmountWidget::textChanged, ui->label, &QLabel::setText);
+    setText(_text);
 }
 
 AmountWidget::~AmountWidget()
@@ -16,24 +18,61 @@ AmountWidget::~AmountWidget()
     delete ui;
 }
 
+QString AmountWidget::text() const
+{
+    return m_text;
+}
+
+qreal AmountWidget::amount() const
+{
+    return m_amount;
+}
+
+QString AmountWidget::comment() const
+{
+    return m_comment;
+}
+
+void AmountWidget::setText(QString text)
+{
+    if (m_text == text)
+        return;
+
+    m_text = text;
+    emit textChanged(m_text);
+}
+
+void AmountWidget::setComment(QString comment)
+{
+    if (m_comment == comment)
+        return;
+
+    m_comment = comment;
+    emit commentChanged(m_comment);
+}
+
+void AmountWidget::setAmount(qreal amount)
+{
+    qWarning("Floating point comparison needs context sanity check");
+    if (qFuzzyCompare(m_amount, amount))
+        return;
+
+    m_amount = amount;
+    emit amountChanged(m_amount);
+}
+
 void AmountWidget::on_buttonBox_accepted()
 {
     bool ok;
-    this->m_operation.amount = ui->leAmount->text().toFloat(&ok);
+    qreal value = ui->leAmount->text().toFloat(&ok);
     if (!ok){
         QMessageBox::critical(this, "Херь в сумме", "Сумму в число не получается перевести");
         return;
     }
-    this->m_operation.comment = ui->leComment->text();
-    SaveDataTask* task = new SaveDataTask(this, this->m_operation);
-    task->setRemove_on_finish(true);
-    int uid = task_queue->addNewTask(task);
-    if (uid < 0){
-        qDebug()<<__FUNCTION__<<"Task creation failed"<<uid;
-        return;
-    }
-    emit notify("Операция добавлена в очередь на запись в базу");
-    emit goHome();
+
+    setAmount(value);
+    setComment(ui->leComment->text());
+    emit goNext();
 }
 
 void AmountWidget::on_buttonBox_rejected()

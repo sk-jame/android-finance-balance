@@ -1,10 +1,10 @@
 #include "task.h"
 #include <QDebug>
-//#include "ui/widgetforstack.h"
+//#include "ui/StackWidget.h"
 
 /*********************************** Task methods ***************************************/
 
-Task::Task(WidgetForStack *widget) :
+Task::Task(StackWidget *widget) :
     m_uid(-1),
     m_remove_on_finish(false),
     m_lastWidget(widget),
@@ -51,7 +51,7 @@ void Task::attempts_inc()
     m_attempts++;
 }
 
-void Task::setLastWidget(WidgetForStack *lastWidget)
+void Task::setLastWidget(StackWidget *lastWidget)
 {
     m_lastWidget = lastWidget;
     m_isValid = true;
@@ -88,7 +88,7 @@ void Task::setStatus(const TaskStatus &status)
     m_status = status;
 }
 
-WidgetForStack *Task::lastWidget() const
+StackWidget *Task::lastWidget() const
 {
     return m_lastWidget;
 }
@@ -109,12 +109,12 @@ SaveDataTask::~SaveDataTask()
 {
     qDebug() << __FUNCTION__ << __LINE__;
     if (m_operation)
-        delete m_operation;
+        delete m_operation; 
 }
 
-SaveDataTask::SaveDataTask(WidgetForStack *widget, const Operation &operation):
+SaveDataTask::SaveDataTask(StackWidget *widget, Operation *operation):
     Task(widget),
-    m_operation(new Operation(operation))
+    m_operation(operation)
 {
     m_type = Task::task_write;
 }
@@ -145,15 +145,15 @@ ReadDataTask::~ReadDataTask()
     m_read_data.clear();
 }
 
-ReadDataTask::ReadDataTask(WidgetForStack *widget) :
+ReadDataTask::ReadDataTask(StackWidget *widget) :
     Task(widget)
 {
     m_type = (Task::task_read);
 }
 
-void ReadDataTask::addOperation(const Operation &op)
+void ReadDataTask::addOperation(Operation *op)
 {
-    m_read_data.push_back(new Operation(op));
+    m_read_data.push_back(op);
 }
 
 const QList<Operation *> &ReadDataTask::read_data() const
@@ -179,7 +179,7 @@ ExecQueryTask::ExecQueryTask(const QString &request)
 
 }
 
-ExecQueryTask::ExecQueryTask(WidgetForStack *widget, const QString &request)
+ExecQueryTask::ExecQueryTask(StackWidget *widget, const QString &request)
     : Task(widget),
       m_request(request)
 {

@@ -32,8 +32,7 @@ public:
 
     virtual bool isReasonValid() {
         if (flag(filtered_by_reason))
-            return (reasonFilter > Operation::reason_invalid &&
-                    reasonFilter < Operation::reason_last);
+            return true; // todo fix it
         return true;
     }
 

@@ -6,9 +6,13 @@
 #include "data/databaseworker.h"
 #include "ui/base/widgetforstack.h"
 
+#include "ui/incomestackwidget.h"
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    IncomeStackWidget test;
 
 #ifdef NOT_DEFAULT_STYLE_ALLOWED
     QFile file(":/ui/style.qss");
@@ -24,8 +28,6 @@ int main(int argc, char *argv[])
     Logger::setCallbackEvents(false);
 
     TaskQueue task_queue;
-    WidgetForStack::setTaskQueue(&task_queue);
-
     DataBaseWorker database_worker(&task_queue);
     if (database_worker.isGood() == false){
         qDebug()<<"Something realy bad happens with database(QSql) or mb with db file (QFile)";

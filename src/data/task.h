@@ -9,7 +9,7 @@
 #include <QVector>
 #include <QObject>
 
-class WidgetForStack;
+class StackWidget;
 class Task
 {
 private:
@@ -29,9 +29,9 @@ public:
     };
 
     Task();
-    Task(WidgetForStack* widget);
+    Task(StackWidget* widget);
     virtual ~Task();
-    WidgetForStack *lastWidget() const;
+    StackWidget *lastWidget() const;
     QString error() const;
     void setError(const QString &error);
     TaskStatus status() const;
@@ -45,12 +45,12 @@ public:
     bool shouldRemove_on_finish();
     int attempts() const;
     void attempts_inc();
-    void setLastWidget(WidgetForStack *lastWidget);
+    void setLastWidget(StackWidget *lastWidget);
 
 protected:
     bool m_remove_on_finish;
     TaskType m_type;
-    WidgetForStack* m_lastWidget;
+    StackWidget* m_lastWidget;
     TaskStatus m_status;
     QString m_error;
     bool m_isValid;
@@ -63,11 +63,10 @@ class SaveDataTask : public Task
 public:
     SaveDataTask();
     virtual ~SaveDataTask();
-    explicit SaveDataTask(WidgetForStack* widget, const Operation& operation);
+    explicit SaveDataTask(StackWidget* widget, Operation* operation);
     const Operation* operation() const ;
 private:
     Operation* m_operation;
-
     // Task interface
 public:
     bool isValid();
@@ -81,8 +80,8 @@ public:
 
     ReadDataTask();
     virtual ~ReadDataTask();
-    explicit ReadDataTask(WidgetForStack* widget);
-    void addOperation(const Operation& op);
+    explicit ReadDataTask(StackWidget* widget);
+    void addOperation(Operation *op);
     const QList<Operation *> &read_data() const;
 
     // Task interface
@@ -95,7 +94,7 @@ class ExecQueryTask : public Task
 public:
     ExecQueryTask();
     ExecQueryTask(const QString& request);
-    explicit ExecQueryTask(WidgetForStack* widget, const QString& request);
+    explicit ExecQueryTask(StackWidget* widget, const QString& request);
     virtual ~ExecQueryTask();
     void setQuery(const QSqlQuery& source);
     const QSqlQuery &query() const;
