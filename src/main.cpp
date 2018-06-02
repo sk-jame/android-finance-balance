@@ -4,7 +4,7 @@
 #include <QTextStream>
 #include <QFile>
 #include "data/databaseworker.h"
-#include "ui/widgetforstack.h"
+#include "ui/base/widgetforstack.h"
 
 int main(int argc, char *argv[])
 {
@@ -37,6 +37,7 @@ int main(int argc, char *argv[])
     QObject::connect(&w, &MainWindow::error, &database_worker, &DataBaseWorker::error, Qt::QueuedConnection);
     QObject::connect(&task_queue, &TaskQueue::finished_task, &w, &MainWindow::onFinishedTask, Qt::QueuedConnection);
     QObject::connect(&database_worker, &DataBaseWorker::task_failed, &w, &MainWindow::onFinishedTask, Qt::QueuedConnection);
+
     w.show();
     database_worker.start();
     w.init_labels();

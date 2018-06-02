@@ -1,7 +1,9 @@
 #ifndef WIDGETFORSTACK_H
 #define WIDGETFORSTACK_H
 
-#include "data/operations.h"
+#ifndef TEST
+
+#include "common/operations.h"
 #include <QWidget>
 #include "data/task.h"
 
@@ -35,6 +37,9 @@ protected:
     void keyReleaseEvent(QKeyEvent *event);
 };
 
-
+#else
+#include <QWidget>
+typedef QWidget WidgetForStack;
+#endif // TEST
 
 #endif // WIDGETFORSTACK_H

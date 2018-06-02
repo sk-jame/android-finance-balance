@@ -9,30 +9,35 @@ class Operation {
 private:
     int         m_type_index;
 public:
-    enum EDirection{
-        income,
-        outcome
+    enum Type{
+        type_invalid = -1,
+        type_income = 0,
+        type_outcome,
+        type_last
     };
 
     enum Reasons{
-        reason_food,
+        reason_doesnt_matter = -2,       /* https://www.youtube.com/watch?v=tAGnKpE4NCI */
+        reason_invalid = -1,
+        reason_food = 0,
         reason_entertainment,
         reason_charity,
         reason_saveMoney,
         reason_apartment,
         reason_credits,
         reason_transport,
-        reason_last
+        reason_technics,
+        reason_last                         /* carefull with Operation::getReasonsNames */
     };
 
-    EDirection  dir;
+    Type  type;
     QString     reason;
     QString     comment;
     qreal       amount;
     QDateTime   date_time;
 
     Operation() :
-        dir(income),
+        type(type_income),
         reason(""),
         comment(""),
         amount(0),
@@ -40,7 +45,7 @@ public:
     {}
 
     Operation(Operation& another) :
-        dir(another.dir),
+        type(another.type),
         reason(another.reason),
         comment(another.comment),
         amount(another.amount),
@@ -48,7 +53,7 @@ public:
     {}
 
     Operation(const Operation& another) :
-        dir(another.dir),
+        type(another.type),
         reason(another.reason),
         comment(another.comment),
         amount(another.amount),
@@ -57,7 +62,7 @@ public:
 
     QJsonObject toJSON(bool with_date = true){
         QJsonObject obj;
-        obj["direction"] = (dir==income)?"income":"outcome";
+        obj["direction"] = (type==type_income)?"income":"outcome";
         obj["type"] = reason;
         obj["amount"] = amount;
         obj["comment"] = comment;
@@ -69,8 +74,8 @@ public:
     }
 
     Operation(const QJsonObject& json) :
-        dir((json["direction"].toString() == "income") ? (income) : (outcome)),
-        reason(json["type"].toString()),
+        type((json["type"].toString() == "income") ? (type_income) : (type_outcome)),
+        reason(json["reason"].toString()),
         comment(json["comment"].toString()),
         amount(json["amount"].toString().toFloat()),
         date_time(QDateTime::fromString(json["date_time"].toString(), "dd.MM.yyyy HH:mm:ss"))
@@ -82,10 +87,11 @@ public:
             tmpList.push_back("Еда");
             tmpList.push_back("Развлечения");
             tmpList.push_back("Помощь");
-            tmpList.push_back("Отложить");
-            tmpList.push_back("Квартплата");
-            tmpList.push_back("Кредиты");
+            tmpList.push_back("На будущее");
+            tmpList.push_back("Квартира");
+            tmpList.push_back("Кредиты / Долги");
             tmpList.push_back("Транспорт");
+            tmpList.push_back("Техника");
         }
         return tmpList;
     }
@@ -95,7 +101,7 @@ public:
     }
 
     const QString direction_name() {
-        return (dir == income)? ("Income") : ("Outcome");
+        return (type == type_income)? ("Income") : ("Outcome");
     }
 };
 

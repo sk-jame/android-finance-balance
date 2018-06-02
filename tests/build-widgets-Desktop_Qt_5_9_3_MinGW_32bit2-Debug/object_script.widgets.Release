@@ -1,0 +1,17 @@
+INPUT(
+./release\main.o
+./release\amountwidget.o
+./release\databasetablewidget.o
+./release\dbtableview.o
+./release\qtablesortwidget.o
+./release\reasonwidget.o
+./release\summarywidget.o
+./release\widgetforstack.o
+./release\moc_amountwidget.o
+./release\moc_databasetablewidget.o
+./release\moc_dbtableview.o
+./release\moc_qtablesortwidget.o
+./release\moc_reasonwidget.o
+./release\moc_summarywidget.o
+./release\moc_widgetforstack.o
+);

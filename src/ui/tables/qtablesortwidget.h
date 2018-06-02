@@ -42,9 +42,9 @@ protected:
 public slots:
 	virtual void setSortType(int col, QTableSortWidget::ESortType type);
 	virtual void convertColumnValue(int col, ConvertFunction func);
+    virtual void find(QString searchStr);
 protected slots:
 	virtual void sortColumn(int num);
-    virtual void find(QString searchStr);
 	// QWidget interface
 protected:
     virtual void mousePressEvent(QMouseEvent *event);

@@ -8,7 +8,7 @@ DatabaseTableWidget::DatabaseTableWidget(QWidget *parent)
       tableType_current(DataContainer::filtering_only),
       tableType_request(DataContainer::filtering_only)
 {
-    filter.filterType = DataFilter::filter_disabled;
+    filter.filterFlags = DataFilter::filter_disabled;
     this->setEnabled(true);
     this->verticalHeader()->setHidden(true);
 }
@@ -52,7 +52,7 @@ void DatabaseTableWidget::contextMenuShow(QMouseEvent *event)
 {
     QMenu menu(this);
     QAction* actCpy = menu.addAction("Копировать в буфер обмена");
-    QAction* actFind = menu.addAction("Найти...");
+//    QAction* actFind = menu.addAction("Найти...");
     QMenu* menu_content = menu.addMenu("Отображать...");
     QMenu* menu_tableSelect = menu_content->addMenu("Таблицу");
     QAction* actShowIncome = menu_tableSelect->addAction("Входящие");
@@ -79,45 +79,45 @@ void DatabaseTableWidget::contextMenuShow(QMouseEvent *event)
         copyToClipBoard();
         return;
     }
-    else if (res == actFind){
-        QTableWidgetItem* tmp_item = itemAt(event->pos());
-        if (tmp_item){
-            lastSearchString = tmp_item->text();
-            find(lastSearchString);
-        }
+//    else if (res == actFind){
+//        QTableWidgetItem* tmp_item = itemAt(event->pos());
+//        if (tmp_item){
+//            lastSearchString = tmp_item->text();
+//            find(lastSearchString);
+//        }
 
-        showFindPopup(this->geometry().topLeft());
-        return;
-    }
+//        showFindPopup(this->geometry().topLeft());
+//        return;
+//    }
     else if (res == actShowAll){
-        filter.filterType |= DataFilter::filter_all_tables;
+        filter.filterFlags |= DataFilter::filter_show_all_tbl;
     }
     else if (res == actShowDailyBalance){
         tableType_request = DataContainer::balance_by_dates;
-        filter.filterType |= DataFilter::filter_all_tables;
+        filter.filterFlags |= DataFilter::filter_show_all_tbl;
     }
     else if (res == actShowMonthBalance){
         tableType_request = DataContainer::balance_by_monthes;
-        filter.filterType |= DataFilter::filter_all_tables;
+        filter.filterFlags |= DataFilter::filter_show_all_tbl;
     }
     else if (res == actShowSummaryReason){
         tableType_request = DataContainer::summary_by_reason;
     }
     else if (res == actShowDailySummary){
         tableType_request = DataContainer::summary_by_dates;
-        filter.filterType |= DataFilter::filter_all_tables;
+        filter.filterFlags |= DataFilter::filter_show_all_tbl;
     }
     else if (res == actShowMonthSummary){
         tableType_request = DataContainer::summary_by_monthes;
-        filter.filterType |= DataFilter::filter_all_tables;
+        filter.filterFlags |= DataFilter::filter_show_all_tbl;
     }
     else if (res == actShowIncome){
-        filter.table = Operation::income;
-        filter.filterType &= ~DataFilter::filter_all_tables;
+        filter.table = Operation::type_income;
+        filter.filterFlags &= ~DataFilter::filter_show_all_tbl;
     }
     else if (res == actShowOutcome){
-        filter.table = Operation::outcome;
-        filter.filterType &= ~DataFilter::filter_all_tables;
+        filter.table = Operation::type_outcome;
+        filter.filterFlags &= ~DataFilter::filter_show_all_tbl;
     }
     else if (res == actShowOperations){
         tableType_request = DataContainer::filtering_only;

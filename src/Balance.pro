@@ -28,40 +28,42 @@ DEFINES += DB_FORMAT_VERSION=1
 
 
 SOURCES += \
-            main.cpp \
-            ui/mainwindow.cpp \
-            ui/outcomewidget.cpp \
-            ui/widgetforstack.cpp \
-            ui/amountwidget.cpp \
-            ui/incomewidget.cpp \
-            ui/summarywidget.cpp \
-            ui/dbtableview.cpp \
-            ui/qtablesortwidget.cpp \
-            ui/databasetablewidget.cpp \
-            data/task.cpp \
-            data/databaseworker.cpp \
-            data/datacontainer.cpp \
-            common/logger.cpp
+    main.cpp \
+    ui/mainwindow.cpp \
+    ui/base/widgetforstack.cpp \
+    ui/tables/qtablesortwidget.cpp \
+    ui/tables/databasetablewidget.cpp \
+    ui/base/amountwidget.cpp \
+    data/task.cpp \
+    data/databaseworker.cpp \
+    data/datacontainer.cpp \
+    common/logger.cpp \
+    ui/base/reasonwidget.cpp \
+    ui/base/filterwidget.cpp \
+    ui/incomestackwidget.cpp \
+    ui/stackwidget.cpp
 
 HEADERS += \
-            ui/mainwindow.h \
-            ui/outcomewidget.h \
-            ui/widgetforstack.h \
-            ui/amountwidget.h \
-            ui/incomewidget.h \
-            ui/summarywidget.h \
-            ui/dbtableview.h \
-            ui/qtablesortwidget.h \
-            ui/databasetablewidget.h \
-            data/operations.h \
-            data/task.h \
-            data/databaseworker.h \
-            data/datacontainer.h \
-            common/logger.h
+    ui/mainwindow.h \
+    ui/base/widgetforstack.h \
+    ui/tables/qtablesortwidget.h \
+    ui/tables/databasetablewidget.h \
+    ui/base/amountwidget.h \
+    data/task.h \
+    data/databaseworker.h \
+    data/datacontainer.h \
+    common/operations.h \
+    common/logger.h \
+    ui/base/reasonwidget.h \
+    ui/base/filterwidget.h \
+    ui/incomestackwidget.h \
+    ui/stackwidget.h
 
 FORMS += \
-            ui/mainwindow.ui \
-            ui/summarywidget.ui
+    ui/mainwindow.ui \
+    ui/base/amountwidget.ui \
+    ui/base/reasonwidget.ui \
+    ui/base/filterwidget.ui
 
 CONFIG += mobility
 MOBILITY = 
@@ -69,3 +71,5 @@ MOBILITY =
 RESOURCES += \
     resources.qrc
 
+INCLUDEPATH += \
+    ui/base

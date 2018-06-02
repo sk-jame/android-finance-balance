@@ -1,6 +1,6 @@
 #include "task.h"
 #include <QDebug>
-#include "ui/widgetforstack.h"
+//#include "ui/widgetforstack.h"
 
 /*********************************** Task methods ***************************************/
 
@@ -88,11 +88,6 @@ void Task::setStatus(const TaskStatus &status)
     m_status = status;
 }
 
-bool Task::isValid() const
-{
-    return m_isValid;
-}
-
 WidgetForStack *Task::lastWidget() const
 {
     return m_lastWidget;
@@ -129,6 +124,11 @@ const Operation *SaveDataTask::operation() const
     return m_operation;
 }
 
+bool SaveDataTask::isValid()
+{
+    return m_isValid;
+}
+
 /******************************** Read data task ******************************/
 ReadDataTask::ReadDataTask() :
     Task()
@@ -159,6 +159,11 @@ void ReadDataTask::addOperation(const Operation &op)
 const QList<Operation *> &ReadDataTask::read_data() const
 {
     return m_read_data;
+}
+
+bool ReadDataTask::isValid()
+{
+    return filter.isValid();
 }
 
 /****************************** Execute query task ******************************/
@@ -201,6 +206,11 @@ QString ExecQueryTask::request() const
     return m_request;
 }
 
+bool ExecQueryTask::isValid()
+{
+    return m_isValid;
+}
+
 /*********************************** Tasks queue methods ***************************************/
 
 TaskQueue::TaskQueue() : QObject(){
@@ -226,6 +236,9 @@ TaskQueue::~TaskQueue(){
 }
 
 int TaskQueue::addNewTask(Task *task) {
+    if (!task->isValid())
+        return -1;
+
     if (!mutex_new_op.tryLock(500))
         return -1;
 

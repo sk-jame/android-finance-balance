@@ -14,7 +14,7 @@ qreal DataContainer::totalIncome()
 {
     qreal total = 0;
     foreach (Operation* op, m_operations) {
-        if (op->dir == Operation::income){
+        if (op->type == Operation::type_income){
             total += op->amount;
         }
     }
@@ -25,7 +25,7 @@ qreal DataContainer::totalOutcome()
 {
     qreal total = 0;
     foreach (Operation* op, m_operations) {
-        if (op->dir == Operation::outcome){
+        if (op->type == Operation::type_outcome){
             total += op->amount;
         }
     }
@@ -36,7 +36,7 @@ qreal DataContainer::totalSaved()
 {
     qreal total = 0;
     foreach (Operation* op, m_operations) {
-        if (op->dir == Operation::outcome &&
+        if (op->type == Operation::type_outcome &&
             op->reasonIndex() == Operation::reason_saveMoney){
             total += op->amount;
         }
@@ -48,10 +48,10 @@ qreal DataContainer::totalDifference()
 {
     qreal total = 0;
     foreach (Operation* op, m_operations) {
-        if (op->dir == Operation::income){
+        if (op->type == Operation::type_income){
             total += op->amount;
         }
-        if (op->dir == Operation::outcome){
+        if (op->type == Operation::type_outcome){
             total -= op->amount;
         }
     }
@@ -69,7 +69,7 @@ QList<QVector<QVariant>* > DataContainer::getTable(TableTypes type)
         table.push_back(new QVector<QVariant>(tmp));
         foreach (Operation* op, m_operations) {
             tmp.clear();
-            if (op->dir == Operation::outcome)
+            if (op->type == Operation::type_outcome)
                 tmp << op->date_time.date() << op->date_time.time() << op->reason << op->amount << op->comment;
             else
                 tmp << op->date_time.date() << op->date_time.time() << "---" << op->amount << op->comment;
@@ -113,7 +113,7 @@ void DataContainer::split_operations()
     m_operations_income.clear();
     m_operations_outcome.clear();
     foreach (Operation* op, m_operations) {
-        if (op->dir == Operation::income)
+        if (op->type == Operation::type_income)
             m_operations_income << op;
         else
             m_operations_outcome << op;
@@ -175,11 +175,11 @@ void DataContainer::getSummaryByReason(QList<QVector<QVariant> *> &table, QList<
         amount_by_reason.push_back(0);
     }
 
-    foreach (Operation* op, ops) {
-        amount_by_reason[op->reasonIndex()] += op->amount;
+    for(int i = 0; i < ops.count(); i++){
+        amount_by_reason[ops.at(i)->reasonIndex()] += ops.at(i)->amount;
     }
 
-    for(int i = 0; i < amount_by_reason.count(); i++){
+    for(int i = 0; i < Operation::reason_last; i++){
         QVector<QVariant> tmp;
         tmp << Operation::getReasonsNames().at(i) << amount_by_reason[i];
         table.push_back(new QVector<QVariant>(tmp));
@@ -195,9 +195,9 @@ void DataContainer::getDailyBalance(QList<QVector<QVariant> *> &table, QList<Ope
     qreal tmp_amount = 0;
     foreach (Operation* op, ops) {
         if (tmp_date == op->date_time.date()){
-            if (op->dir == Operation::outcome)
+            if (op->type == Operation::type_outcome)
                 tmp_amount -= op->amount;
-            else if (op->dir == Operation::income)
+            else if (op->type == Operation::type_income)
                 tmp_amount += op->amount;
         }
 
@@ -206,9 +206,9 @@ void DataContainer::getDailyBalance(QList<QVector<QVariant> *> &table, QList<Ope
             tmp << tmp_date.toString("yyyy-MM-dd") << tmp_amount;
             table.push_back(new QVector<QVariant>(tmp));
             tmp_date = op->date_time.date();
-            if (op->dir == Operation::outcome)
+            if (op->type == Operation::type_outcome)
                 tmp_amount = -op->amount;
-            else if (op->dir == Operation::income)
+            else if (op->type == Operation::type_income)
                 tmp_amount = op->amount;
         }
     }
@@ -226,9 +226,9 @@ void DataContainer::getMonthlyBalance(QList<QVector<QVariant> *> &table, QList<O
                 tmp_date.year() == op->date_time.date().year();
 
         if (res){
-            if (op->dir == Operation::outcome)
+            if (op->type == Operation::type_outcome)
                 tmp_amount -= op->amount;
-            else if (op->dir == Operation::income)
+            else if (op->type == Operation::type_income)
                 tmp_amount += op->amount;
         }
 

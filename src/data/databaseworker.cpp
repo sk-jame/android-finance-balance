@@ -32,7 +32,7 @@ DataBaseWorker::DataBaseWorker(TaskQueue *task_queue, QObject *parent)
         return;
     }
 
-    if (!execQuery("SELECT * FROM Outcome")){
+    if (!execQuery(QString::asprintf("SELECT * FROM %s", income_table_name.toStdString().c_str()))){
         return;
     }
     query.next();
@@ -152,10 +152,10 @@ bool DataBaseWorker::init_or_create_db(QString path)
         return false;
     }
 
-    QString req = QString::asprintf("INSERT INTO Outcome (date,time,reason,amount, comment) VALUES ('%s','%s',%u,%.2f,'%s');",
+    QString req = QString::asprintf("INSERT INTO Income (date,time,reason,amount, comment) VALUES ('%s','%s',%i,%.2f,'%s');",
                                     QDateTime::currentDateTime().date().toString("yyyy-MM-dd").toStdString().c_str(),
                                     QDateTime::currentDateTime().time().toString("HH:mm:ss").toStdString().c_str(),
-                                    0, 0.0f, "dummy");
+                                    static_cast<int>(Operation::reason_invalid), -322.0f, "dummy");
     if (!execQuery(req)){
         return false;
     }
@@ -193,10 +193,10 @@ const DataBaseWorker::DataBaseColumns& DataBaseWorker::db_columns()
 int DataBaseWorker::saveNewOperation(const Operation* op)
 {
     QString request = QString::asprintf("INSERT INTO %s (date,time,reason,amount, comment) VALUES ('%s','%s',%u,%.2f,'%s');",
-                                        (op->dir == Operation::income) ? ("Income") : ("Outcome"),
+                                        (op->type == Operation::type_income) ? ("Income") : ("Outcome"),
                                         op->date_time.date().toString("yyyy-MM-dd").toStdString().c_str(),
                                         op->date_time.time().toString("HH:mm:ss").toStdString().c_str(),
-                                        (op->dir == Operation::income) ? (0) : (op->reasonIndex()),
+                                        (op->type == Operation::type_income) ? (0) : (op->reasonIndex()),
                                         op->amount, op->comment.toStdString().c_str());
 
     if (!execQuery(request))
@@ -205,7 +205,7 @@ int DataBaseWorker::saveNewOperation(const Operation* op)
     return 0;
 }
 
-typedef QPair<QString, Operation::EDirection> StringWithDirection;
+typedef QPair<QString, Operation::Type> StringWithDirection;
 
 typedef QList<StringWithDirection> StrDirList;
 
@@ -215,22 +215,32 @@ int DataBaseWorker::readTask(ReadDataTask* task)
     StrDirList requests;
     QStringList additionalWhereList;
 
-    if (filter->checkType(DataFilter::filter_all_tables)){
-        requests.push_back(QPair<QString , Operation::EDirection>("SELECT * FROM Income", Operation::income));
-        requests.push_back(QPair<QString , Operation::EDirection>("SELECT * FROM Outcome", Operation::outcome));
+    if (!this->isGood()){
+        qDebug()<<"Too early for "<<__FUNCTION__;
+        return -2;
+    }
+
+    if (!task->isValid()){
+        qDebug()<<__FUNCTION__<<__LINE__<<"invalid task";
+        return -3;
+    }
+
+    if (filter->flag(DataFilter::filter_show_all_tbl)){
+        requests.push_back(QPair<QString , Operation::Type>("SELECT * FROM Income", Operation::type_income));
+        requests.push_back(QPair<QString , Operation::Type>("SELECT * FROM Outcome", Operation::type_outcome));
     }
     else {
-        requests.push_back(QPair<QString , Operation::EDirection>("SELECT * FROM " + QString((filter->table == Operation::income)?income_table_name:outcome_table_name),
+        requests.push_back(QPair<QString , Operation::Type>("SELECT * FROM " + QString((filter->table == Operation::type_income)?income_table_name:outcome_table_name),
                                                                   filter->table));
     }
-    if (filter->checkType(DataFilter::filtered_by_date)){
+    if (filter->flag(DataFilter::filtered_by_date)){
         additionalWhereList.push_back(QString::asprintf("date BETWEEN \'%s\' AND \'%s\'",
                                                         filter->dateFilter.first.date().toString("yyyy-MM-dd").toStdString().c_str(),
                                                         filter->dateFilter.second.date().toString("yyyy-MM-dd").toStdString().c_str()
                                                         ));
     }
 
-    if (filter->checkType(DataFilter::filtered_by_reason)){
+    if (filter->flag(DataFilter::filtered_by_reason)){
         additionalWhereList.push_back(QString::asprintf("reason = %i", filter->reasonFilter));
     }
 
@@ -244,7 +254,7 @@ int DataBaseWorker::readTask(ReadDataTask* task)
                     req += " AND";
             }
         }
-        qDebug() << req;
+
         if (!execQuery(req))
             return -1;
 
@@ -252,8 +262,10 @@ int DataBaseWorker::readTask(ReadDataTask* task)
             Operation op;
             op.date_time.setDate(QDate::fromString(query.value(db_columns().idx_date).toString(), "yyyy-MM-dd"));
             op.date_time.setTime(QTime::fromString(query.value(db_columns().idx_time).toString(), "HH:mm:ss"));
-            op.dir = request.second;
-            op.reason = Operation::getReasonsNames().at(query.value(db_columns().idx_reason).toUInt());
+            op.type = request.second;
+            if (query.value(db_columns().idx_reason).toInt() == Operation::reason_invalid)
+                continue;
+            op.reason = Operation::getReasonsNames().at(query.value(db_columns().idx_reason).toInt());
             op.amount = query.value(db_columns().idx_amount).toFloat();
             op.comment = query.value(db_columns().idx_comment).toString();
             task->addOperation(op);

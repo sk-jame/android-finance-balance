@@ -3,7 +3,7 @@
 
 #include <QSqlQuery>
 #include "datacontainer.h"
-#include "operations.h"
+#include "common/operations.h"
 #include <QMutexLocker>
 #include <QList>
 #include <QVector>
@@ -36,7 +36,7 @@ public:
     void setError(const QString &error);
     TaskStatus status() const;
     void setStatus(const TaskStatus &status);
-    bool isValid() const;
+    virtual bool isValid() = 0;
 
     virtual int taskType();
     qint32 uid() const;
@@ -67,6 +67,10 @@ public:
     const Operation* operation() const ;
 private:
     Operation* m_operation;
+
+    // Task interface
+public:
+    bool isValid();
 };
 
 class ReadDataTask : public Task
@@ -80,6 +84,10 @@ public:
     explicit ReadDataTask(WidgetForStack* widget);
     void addOperation(const Operation& op);
     const QList<Operation *> &read_data() const;
+
+    // Task interface
+public:
+    virtual bool isValid();
 };
 
 class ExecQueryTask : public Task
@@ -95,6 +103,10 @@ public:
 private:
     QString m_request;
     QSqlQuery m_query;
+
+    // Task interface
+public:
+    bool isValid();
 };
 
 class TaskQueue : public QObject

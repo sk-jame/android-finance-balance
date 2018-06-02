@@ -1,0 +1,17 @@
+INPUT(
+./debug\main.o
+./debug\amountwidget.o
+./debug\databasetablewidget.o
+./debug\dbtableview.o
+./debug\qtablesortwidget.o
+./debug\reasonwidget.o
+./debug\summarywidget.o
+./debug\widgetforstack.o
+./debug\moc_amountwidget.o
+./debug\moc_databasetablewidget.o
+./debug\moc_dbtableview.o
+./debug\moc_qtablesortwidget.o
+./debug\moc_reasonwidget.o
+./debug\moc_summarywidget.o
+./debug\moc_widgetforstack.o
+);

@@ -11,7 +11,7 @@
 #include <QObject>
 #include <QtSql>
 #include <QSqlDatabase>
-#include "operations.h"
+#include "common/operations.h"
 
 class DataBaseWorker : public QObject
 {

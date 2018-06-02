@@ -1,9 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "summarywidget.h"
-#include "incomewidget.h"
+#include "filterwidget.h"
+//#include "incomewidget.h"
 #include "amountwidget.h"
-#include "outcomewidget.h"
+//#include "outcomewidget.h"
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -15,10 +15,10 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setCentralWidget(ui->stackedWidget);
     ui->stackedWidget->widget(eWidget_main)->setLayout(ui->verticalLayout_4);
 
-    outcomeWidgetIndex = ui->stackedWidget->addWidget(new OutcomeWidget(this));
+//    outcomeWidgetIndex = ui->stackedWidget->addWidget(new OutcomeWidget(this));
     amountWidgetIndex = ui->stackedWidget->addWidget(new AmountWidget(this));
-    incomeWidgetIndex = ui->stackedWidget->addWidget(new IncomeWidget(this));
-    summaryWidgetIndex = ui->stackedWidget->addWidget(new SummaryWidget(this));
+//    incomeWidgetIndex = ui->stackedWidget->addWidget(new IncomeWidget(this));
+    summaryWidgetIndex = ui->stackedWidget->addWidget(new FilterWidget(this));
 
     for(int i = 0; i < ui->stackedWidget->count(); i++){
         WidgetForStack* w = qobject_cast<WidgetForStack*>(ui->stackedWidget->widget(i));
@@ -41,7 +41,8 @@ MainWindow::~MainWindow()
 void MainWindow::init_labels()
 {
     ReadDataTask *task = new ReadDataTask(nullptr);
-    task->filter.filterType = DataFilter::filter_all_tables;
+    task->filter.filterFlags = DataFilter::filter_show_all_tbl;
+    task->filter.reasonFilter = Operation::reason_invalid;
     int uid = WidgetForStack::getTask_queue()->addNewTask(task);
     if (uid < 0){
         qDebug() << __FUNCTION__ << uid;

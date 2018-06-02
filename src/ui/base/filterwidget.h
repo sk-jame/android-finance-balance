@@ -4,27 +4,26 @@
 #include "widgetforstack.h"
 
 namespace Ui {
-class SummaryWidget;
+class FilterWidget;
 }
 
-class SummaryWidget : public WidgetForStack
+class FilterWidget : public WidgetForStack
 {
     Q_OBJECT
 
 public:
-    explicit SummaryWidget(QWidget *parent = 0);
-    ~SummaryWidget();
+    explicit FilterWidget(QWidget *parent = 0);
+    ~FilterWidget();
 
 private slots:
     void on_pushButton_clicked();
-    void on_TableWidget_updateData();
     void on_pushButton_2_clicked();
     void on_cbShowFilteres_toggled(bool checked);
+    void callTableUpdate();
 private:
-    Ui::SummaryWidget *ui;
+    Ui::FilterWidget *ui;
 
     // WidgetForStack interface
-    void callTableUpdate();
 public slots:
     void operation_finished(Task *ftask);
 };

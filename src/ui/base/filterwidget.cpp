@@ -1,15 +1,13 @@
 #include <QDebug>
 #include <QDate>
-#include "summarywidget.h"
-#include "ui_summarywidget.h"
+#include "filterwidget.h"
+#include "ui_filterwidget.h"
 #include "data/datacontainer.h"
-#include "dbtableview.h"
 
-SummaryWidget::SummaryWidget(QWidget *parent) :
+FilterWidget::FilterWidget(QWidget *parent) :
     WidgetForStack(parent),
-    ui(new Ui::SummaryWidget)
+    ui(new Ui::FilterWidget)
 {
-    this->setGeometry(this->geometry().x(), this->geometry().y(), 720, 1280);
     ui->setupUi(this);
     on_cbShowFilteres_toggled(false);
     this->setLayout(ui->gridLayout);
@@ -17,29 +15,28 @@ SummaryWidget::SummaryWidget(QWidget *parent) :
     ui->deFrom->setTime(QTime(0,0));
     ui->deTo->setDate(QDate::currentDate());
     ui->deTo->setTime(QTime(0,0));
-    ui->tableWidget->show();
-    connect(ui->tableWidget, &DatabaseTableWidget::updateDataRequest, this, &SummaryWidget::on_TableWidget_updateData);
-    adjustSize();
-
+//    ui->tableWidget->show();
+    connect(ui->tableWidget, &DatabaseTableWidget::updateDataRequest, this, &FilterWidget::callTableUpdate);
+    connect(ui->lineEdit, &QLineEdit::textChanged, ui->tableWidget, &DatabaseTableWidget::find);
 }
 
-SummaryWidget::~SummaryWidget()
+FilterWidget::~FilterWidget()
 {
     delete ui;
 }
 
-void SummaryWidget::on_pushButton_clicked()
+void FilterWidget::on_pushButton_clicked()
 {
     if (ui->rbTableSelect_All->isChecked()){
-        ui->tableWidget->filter.filterType |= DataFilter::filter_all_tables;
+        ui->tableWidget->filter.filterFlags |= DataFilter::filter_show_all_tbl;
     }
     else if (ui->rbTableSelect_Income->isChecked()){
-        ui->tableWidget->filter.filterType &= ~DataFilter::filter_all_tables;
-        ui->tableWidget->filter.table = Operation::income;
+        ui->tableWidget->filter.filterFlags &= ~DataFilter::filter_show_all_tbl;
+        ui->tableWidget->filter.table = Operation::type_income;
     }
     else if (ui->rbTableSelect_outcome->isChecked()){
-        ui->tableWidget->filter.filterType &= ~DataFilter::filter_all_tables;
-        ui->tableWidget->filter.table = Operation::outcome;
+        ui->tableWidget->filter.filterFlags &= ~DataFilter::filter_show_all_tbl;
+        ui->tableWidget->filter.table = Operation::type_outcome;
     }
 
     if (ui->rbShowOperations->isChecked()){
@@ -59,23 +56,18 @@ void SummaryWidget::on_pushButton_clicked()
     }
     else if (ui->rbShowReasonSum->isChecked()){
         ui->tableWidget->tableType_request = DataContainer::summary_by_reason;
-        ui->tableWidget->filter.filterType &= ~DataFilter::filter_all_tables;
-        ui->tableWidget->filter.table = Operation::income;
+        ui->tableWidget->filter.filterFlags &= ~DataFilter::filter_show_all_tbl;
+        ui->tableWidget->filter.table = Operation::type_outcome;
     }
 
     callTableUpdate();
 }
 
-void SummaryWidget::on_TableWidget_updateData()
-{
-    callTableUpdate();
-}
-
-void SummaryWidget::callTableUpdate()
+void FilterWidget::callTableUpdate()
 {
     ui->tableWidget->filter.dateFilter.first = ui->deFrom->dateTime();
     ui->tableWidget->filter.dateFilter.second = ui->deTo->dateTime();
-    ui->tableWidget->filter.filterType |= DataFilter::filtered_by_date;
+    ui->tableWidget->filter.filterFlags |= DataFilter::filtered_by_date;
 
     ReadDataTask *task = new ReadDataTask(this);
     task->filter = ui->tableWidget->filter;
@@ -88,7 +80,7 @@ void SummaryWidget::callTableUpdate()
     emit goWaitTask(uid, "Loading...");
 }
 
-void SummaryWidget::operation_finished(Task* ftask)
+void FilterWidget::operation_finished(Task* ftask)
 {
     if (ftask->status() == Task::status_failure){
         return;
@@ -108,26 +100,13 @@ void SummaryWidget::operation_finished(Task* ftask)
     }
 }
 
-void SummaryWidget::on_pushButton_2_clicked()
+void FilterWidget::on_pushButton_2_clicked()
 {
     emit goBack();
 }
 
-void SummaryWidget::on_cbShowFilteres_toggled(bool checked)
+void FilterWidget::on_cbShowFilteres_toggled(bool checked)
 {
-//    ui->deFrom->setEnabled(checked);
-//    ui->deTo->setEnabled(checked);
-//    ui->rbShowBalanceDaily->setEnabled(checked);
-//    ui->rbShowBalanceMonthly->setEnabled(checked);
-//    ui->rbShowDailySum->setEnabled(checked);
-//    ui->rbShowMonthlySum->setEnabled(checked);
-//    ui->rbShowOperations->setEnabled(checked);
-//    ui->rbShowReasonSum->setEnabled(checked);
-//    ui->rbTableSelect_All->setEnabled(checked);
-//    ui->rbTableSelect_Income->setEnabled(checked);
-//    ui->rbTableSelect_outcome->setEnabled(checked);
-//    return;
-
     if (checked){
         ui->deFrom->show();
         ui->deTo->show();
@@ -140,8 +119,13 @@ void SummaryWidget::on_cbShowFilteres_toggled(bool checked)
         ui->rbTableSelect_All->show();
         ui->rbTableSelect_Income->show();
         ui->rbTableSelect_outcome->show();
+        ui->label->show();
+        ui->lineEdit->show();
+        ui->gridLayout->addItem(ui->verticalLayout, 2, 0, 1);
+        ui->gridLayout->addItem(ui->verticalLayout_2, 2, 1, 4);
     }
     else{
+        ui->lineEdit->clear();
         ui->deFrom->hide();
         ui->deTo->hide();
         ui->rbShowBalanceDaily->hide();
@@ -153,8 +137,9 @@ void SummaryWidget::on_cbShowFilteres_toggled(bool checked)
         ui->rbTableSelect_All->hide();
         ui->rbTableSelect_Income->hide();
         ui->rbTableSelect_outcome->hide();
+        ui->label->hide();
+        ui->lineEdit->hide();
+        ui->gridLayout->removeItem(ui->verticalLayout);
+        ui->gridLayout->removeItem(ui->verticalLayout_2);
     }
-    adjustSize();
-    ui->gridLayout->update();
-    update();
 }

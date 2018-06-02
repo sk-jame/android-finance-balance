@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SummaryWidget</class>
- <widget class="QWidget" name="SummaryWidget">
+ <class>FilterWidget</class>
+ <widget class="QWidget" name="FilterWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>720</width>
+    <width>1050</width>
     <height>993</height>
    </rect>
   </property>
@@ -24,7 +24,7 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>701</width>
+     <width>431</width>
      <height>851</height>
     </rect>
    </property>
@@ -45,13 +45,6 @@
      <number>5</number>
     </property>
     <item row="7" column="0" colspan="2">
-     <widget class="Line" name="line">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="0" colspan="2">
      <widget class="DatabaseTableWidget" name="tableWidget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -61,14 +54,14 @@
       </property>
      </widget>
     </item>
-    <item row="9" column="1">
+    <item row="8" column="1">
      <widget class="QPushButton" name="pushButton">
       <property name="text">
        <string>Показать</string>
       </property>
      </widget>
     </item>
-    <item row="9" column="0">
+    <item row="8" column="0">
      <widget class="QPushButton" name="pushButton_2">
       <property name="text">
        <string>Назад</string>
@@ -78,7 +71,7 @@
     <item row="1" column="0">
      <widget class="QDateEdit" name="deFrom">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+       <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -91,7 +84,7 @@
     <item row="1" column="1">
      <widget class="QDateEdit" name="deTo">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+       <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -115,7 +108,7 @@
          <string>Входящие</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <attribute name="buttonGroup">
          <string notr="true">buttonGroup_2</string>
@@ -137,20 +130,49 @@
         <property name="text">
          <string>Все</string>
         </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
         <attribute name="buttonGroup">
          <string notr="true">buttonGroup_2</string>
         </attribute>
        </widget>
       </item>
       <item>
-       <spacer name="verticalSpacer">
+       <widget class="QLabel" name="label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Текущий фильт (по тексту)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_2">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
           <width>20</width>
-          <height>40</height>
+          <height>24</height>
          </size>
         </property>
        </spacer>
@@ -229,14 +251,17 @@
        </widget>
       </item>
       <item>
-       <spacer name="verticalSpacer_2">
+       <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
           <width>20</width>
-          <height>40</height>
+          <height>5</height>
          </size>
         </property>
        </spacer>
@@ -253,7 +278,6 @@
    </layout>
    <zorder>deTo</zorder>
    <zorder>deFrom</zorder>
-   <zorder>line</zorder>
    <zorder>tableWidget</zorder>
    <zorder>pushButton</zorder>
    <zorder>pushButton_2</zorder>
@@ -264,12 +288,23 @@
   <customwidget>
    <class>DatabaseTableWidget</class>
    <extends>QTableWidget</extends>
-   <header>ui/databasetablewidget.h</header>
+   <header>ui/tables/databasetablewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>cbShowFilteres</tabstop>
   <tabstop>deFrom</tabstop>
   <tabstop>deTo</tabstop>
+  <tabstop>rbTableSelect_Income</tabstop>
+  <tabstop>rbTableSelect_outcome</tabstop>
+  <tabstop>rbTableSelect_All</tabstop>
+  <tabstop>rbShowOperations</tabstop>
+  <tabstop>rbShowBalanceDaily</tabstop>
+  <tabstop>rbShowBalanceMonthly</tabstop>
+  <tabstop>rbShowMonthlySum</tabstop>
+  <tabstop>rbShowDailySum</tabstop>
+  <tabstop>rbShowReasonSum</tabstop>
+  <tabstop>lineEdit</tabstop>
   <tabstop>tableWidget</tabstop>
   <tabstop>pushButton</tabstop>
   <tabstop>pushButton_2</tabstop>
@@ -277,7 +312,7 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup"/>
+  <buttongroup name="buttonGroup_2"/>
  </buttongroups>
 </ui>

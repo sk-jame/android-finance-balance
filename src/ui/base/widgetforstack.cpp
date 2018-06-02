@@ -2,6 +2,8 @@
 #include "widgetforstack.h"
 #include <QDebug>
 
+#ifndef TEST
+
 Operation WidgetForStack::m_operation = Operation();
 TaskQueue* WidgetForStack::task_queue = nullptr;
 bool WidgetForStack::m_canContinue = false;
@@ -32,3 +34,5 @@ void WidgetForStack::operation_error(QString error, int code)
     m_canContinue = false;
     qDebug()<<error<<"Code:"<<code;
 }
+
+#endif // TEST
