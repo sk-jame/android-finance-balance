@@ -34,7 +34,13 @@ void IncomeStackWidget::operation_finished(Task *)
 
 void IncomeStackWidget::onGoBack()
 {
-
+    WidgetForStack* w = qobject_cast<WidgetForStack*>(currentWidget());
+    if (w == salary_page || w == saved_page){
+        setCurrentWidget(main_page);
+    }
+    else if (w == main_page){
+        emit goHome();
+    }
 }
 
 void IncomeStackWidget::onGoNext()

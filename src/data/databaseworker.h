@@ -66,7 +66,7 @@ public:
         }
 
     };
-    static const QString filename, income_table_name, outcome_table_name;
+    static const QString filename, income_table_name, outcome_table_name, credit_table_name;
 
     DataBaseWorker(TaskQueue* task_queue, QObject* parent = Q_NULLPTR);
     virtual ~DataBaseWorker();

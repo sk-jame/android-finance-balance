@@ -14,6 +14,7 @@ public:
         type_invalid = -1,
         type_income = 0,
         type_outcome,
+        type_credit,
         type_last
     };
 
@@ -170,9 +171,42 @@ public:
     Type type() const {
         return type_income;
     }
-
 };
 
+class CreditOperation : public Operation
+{
+public:
+    qreal amount_max;
+    qreal amount_current;
+    QDateTime date_open, date_closed;
+    uint64_t id;
+
+    enum {
+        reason_add = 0,
+        reason_take_money,
+        reason_pay_money,
+        reason_close,
+        reason_last
+    };
+
+    CreditOperation() : Operation() {}
+    ~CreditOperation() {}
+
+    const QStringList getReasonsNames() {
+        static QStringList tmpList = QStringList();
+        if (tmpList.isEmpty()){
+            tmpList.push_back("Добавить новый кредит/долг");
+            tmpList.push_back("Взять деньги из кредита");
+            tmpList.push_back("Положить деньги кредит (отдать долг)");
+            tmpList.push_back("Закрыть кредит/долг");
+        }
+        return tmpList;
+    }
+
+    Type type() const {
+        return type_credit;
+    }
+};
 #endif // OPERATIONS_H
 
 

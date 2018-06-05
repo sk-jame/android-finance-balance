@@ -134,7 +134,6 @@ public slots:
     void removeTask(Task* task);
 signals:
     void finished_task(Task*);
-
 };
 
 #endif // TASK_H

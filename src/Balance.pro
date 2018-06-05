@@ -42,7 +42,8 @@ SOURCES += \
     ui/base/filterwidget.cpp \
     ui/incomestackwidget.cpp \
     ui/stackwidget.cpp \
-    ui/incomepage.cpp
+    ui/incomepage.cpp \
+    ui/outcomestackwidget.cpp
 
 HEADERS += \
     ui/mainwindow.h \
@@ -59,7 +60,8 @@ HEADERS += \
     ui/base/filterwidget.h \
     ui/incomestackwidget.h \
     ui/stackwidget.h \
-    ui/incomepage.h
+    ui/incomepage.h \
+    ui/outcomestackwidget.h
 
 FORMS += \
     ui/mainwindow.ui \

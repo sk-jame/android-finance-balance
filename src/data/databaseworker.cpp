@@ -7,6 +7,8 @@
 const QString DataBaseWorker::filename = ".balance.sqlite";
 const QString DataBaseWorker::income_table_name = "Income";
 const QString DataBaseWorker::outcome_table_name = "Outcome";
+const QString DataBaseWorker::credit_table_name = "Credits";
+
 DataBaseWorker::DataBaseColumns DataBaseWorker::m_db_columns = DataBaseWorker::DataBaseColumns();
 
 /* function implementation */
@@ -107,10 +109,10 @@ void DataBaseWorker::process()
                 task_queue->addFinishedTask(task);
             }
             else if (task->attempts() >= 3){
-                    qDebug()<<"Failed with that task"<<task->uid();
-                    emit error("Task executing failed", task->uid());
-                    emit task_failed(task);
-                }
+                qDebug()<<"Failed with that task"<<task->uid();
+                emit error("Task executing failed", task->uid());
+                emit task_failed(task);
+            }
             else{
                 task->attempts_inc();
                 task_queue->addNewTask(task);
@@ -142,13 +144,16 @@ bool DataBaseWorker::init_or_create_db(QString path)
         }
     }
 
-    if (!execQuery("CREATE TABLE `Income` ( `id` INTEGER, `date` TEXT, `time` TEXT, `reason` INTEGER, `amount` INTEGER, `comment` TEXT )")){
+    if (!execQuery("CREATE TABLE `Income` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `date` TEXT, `time` TEXT, `reason` INTEGER, `amount` INTEGER, `comment` TEXT )")){
         return false;
     }
     else if (!execQuery("CREATE TABLE `Mgmt_data` ( `LastUpdate` TEXT, `FormatVersion` INTEGER )")){
         return false;
     }
-    else if (!execQuery("CREATE TABLE `Outcome` ( `uid` INTEGER, `date` TEXT, `time` TEXT, `reason` INTEGER, `amount` INTEGER, `comment` TEXT )")){
+    else if (!execQuery("CREATE TABLE `Outcome` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `date` TEXT, `time` TEXT, `reason` INTEGER, `amount` INTEGER, `comment` TEXT )")){
+        return false;
+    }
+    else if (!execQuery("CREATE TABLE `Credits` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `open_date` TEXT, `close_date` TEXT, `current_amount` REAL, `max_amount` REAL, `comment` TEXT )")){
         return false;
     }
 
@@ -161,8 +166,8 @@ bool DataBaseWorker::init_or_create_db(QString path)
     }
 
     req = QString::asprintf("INSERT INTO `Mgmt_data`(`LastUpdate`,`FormatVersion`) VALUES ('%s',%i)",
-                                    QDateTime::currentDateTime().date().toString("yyyy-MM-dd").toStdString().c_str(),
-                                    (int)DB_FORMAT_VERSION);
+                            QDateTime::currentDateTime().date().toString("yyyy-MM-dd").toStdString().c_str(),
+                            (int)DB_FORMAT_VERSION);
     if (!execQuery(req)){
         return false;
     }
@@ -192,14 +197,15 @@ const DataBaseWorker::DataBaseColumns& DataBaseWorker::db_columns()
 
 int DataBaseWorker::saveNewOperation(const Operation* op)
 {
-    QString request = QString::asprintf("INSERT INTO %s (date,time,reason,amount, comment) VALUES ('%s','%s',%u,%.2f,'%s');",
-                                        (op->type() == Operation::type_income) ?
-                                            (income_table_name.toStdString().c_str()) :
-                                            (outcome_table_name.toStdString().c_str()),
-                                        op->date_time.date().toString("yyyy-MM-dd").toStdString().c_str(),
-                                        op->date_time.time().toString("HH:mm:ss").toStdString().c_str(),
-                                        op->reason,
-                                        op->amount, op->comment.toStdString().c_str());
+    QString request;
+    request = QString::asprintf("INSERT INTO %s (date,time,reason,amount, comment) VALUES ('%s','%s',%u,%.2f,'%s');",
+                                (op->type() == Operation::type_income) ?
+                                    (income_table_name.toStdString().c_str()) :
+                                    (outcome_table_name.toStdString().c_str()),
+                                op->date_time.date().toString("yyyy-MM-dd").toStdString().c_str(),
+                                op->date_time.time().toString("HH:mm:ss").toStdString().c_str(),
+                                op->reason,
+                                op->amount, op->comment.toStdString().c_str());
 
     if (!execQuery(request))
         return -1;
@@ -233,7 +239,7 @@ int DataBaseWorker::readTask(ReadDataTask* task)
     }
     else {
         requests.push_back(QPair<QString , Operation::Type>("SELECT * FROM " + QString((filter->table == Operation::type_income)?income_table_name:outcome_table_name),
-                                                                  filter->table));
+                                                            filter->table));
     }
     if (filter->flag(DataFilter::filtered_by_date)){
         additionalWhereList.push_back(QString::asprintf("date BETWEEN \'%s\' AND \'%s\'",
@@ -340,13 +346,13 @@ void DataBaseWorker::process_task()
             if (task->taskType() == Task::task_write){
                 SaveDataTask* s_task = (SaveDataTask*)task;
                 task->setStatus((this->saveNewOperation(s_task->operation()) == 0) ?
-                                   (SaveDataTask::status_success) :
-                                   (SaveDataTask::status_failure));
+                                    (SaveDataTask::status_success) :
+                                    (SaveDataTask::status_failure));
             }
             else if (task->taskType() == Task::task_read){
                 task->setStatus((this->readTask(((ReadDataTask*)task)) == 0) ?
-                                   (SaveDataTask::status_success) :
-                                   (SaveDataTask::status_failure));
+                                    (SaveDataTask::status_success) :
+                                    (SaveDataTask::status_failure));
             }
         }
 
@@ -355,9 +361,9 @@ void DataBaseWorker::process_task()
         }
         else if (task->attempts() >= 3){
             // TODO some block for exclude infinity loop
-                qDebug()<<"Failed with that task"<<task->uid();
-                emit error("Task executing failed", task->uid());
-            }
+            qDebug()<<"Failed with that task"<<task->uid();
+            emit error("Task executing failed", task->uid());
+        }
         else{
             task->attempts_inc();
             task_queue->addNewTask(task);

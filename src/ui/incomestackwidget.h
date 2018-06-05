@@ -13,6 +13,7 @@ class IncomeStackWidget : public StackWidget
     ReasonWidget* main_page;
     AmountWidget* saved_page;
     AmountWidget* salary_page;
+    // todo page for adding money from Credit or Deb
     int index_main_page;
 public:
     IncomeStackWidget(QWidget* parent = Q_NULLPTR);
